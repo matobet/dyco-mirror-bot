@@ -1,37 +1,53 @@
 name: all-the-things
 on: push
 jobs:
-  hadolint:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
         with:
           fetch-depth: 1
-      - run: docker run --rm -i hadolint/hadolint:latest-alpine hadolint --ignore SC1091 --ignore DL3008 - < Dockerfile
-  deploy:
-    needs: hadolint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-        with:
-          fetch-depth: 1
-      - name: set env variables
-        env:
-          IMAGE_NAME: quay.io/dyco/dyco-mirror
+
+      - name: Set environment variables
         run: |
           GIT_SHORT_SHA=${GITHUB_SHA:0:8}
-          echo "image_tags=${IMAGE_NAME}:${GIT_SHORT_SHA},${IMAGE_NAME}:latest" >> ${GITHUB_ENV}
-      - uses: docker/setup-qemu-action@v1
-      - uses: docker/setup-buildx-action@v1
-        with:
-          install: true
+          echo "git_short_sha=${GIT_SHORT_SHA}" >> ${GITHUB_ENV}
+
+      - name: Enable experimental Docker features
+        run: |
+          sudo mv /etc/docker/daemon.json{,.bak}
+          sudo cat /etc/docker/daemon.json.bak | jq '. + {experimental: true}' | sudo tee /etc/docker/daemon.json
+          sudo service docker restart
       - uses: docker/login-action@v1
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
-      - uses: docker/build-push-action@v2
+      - name: Setup Nix
+        uses: cachix/install-nix-action@v12
         with:
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ env.image_tags }}
+          nix_path: nixpkgs=channel:nixos-20.09
+          extra_nix_config: |
+            max-jobs = auto
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v8
+        with:
+          name: matobet-rpi
+          authToken: ${{ secrets.CACHIX_TOKEN }}
+          extraPullNames: iohk
+      - run: nix-build docker.nix 
+      - name: Import image as ARM
+        run: |
+          docker load < result
+          docker inspect dyco-mirror-bot:latest
+
+      - name: Push image to Quay
+        env:
+          IMAGE_NAME: quay.io/dyco/dyco-mirror
+          DOCKER_CLI_EXPERIMENTAL: enabled
+        run: |
+          docker tag dyco-mirror-bot:latest "${IMAGE_NAME}:latest" 
+          docker tag dyco-mirror-bot:latest "${IMAGE_NAME}:${git_short_sha}" 
+          docker push "${IMAGE_NAME}:latest"
+          docker push "${IMAGE_NAME}:${git_short_sha}"
+
