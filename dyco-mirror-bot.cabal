@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f1fb71f7cf662c151611e90e25b28529a536dcc2ca411da0e947ed3931e7da9d
+-- hash: 9db3a8d7396dfb1c0740ea9d56761afd7bcf192b7c8e418baa6a5c5afa835851
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       Config
       Core
+      Logging
       Providers.API
       Providers.Discord
       Providers.Telegram

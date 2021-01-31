@@ -5,24 +5,25 @@ import Core
 import Control.Concurrent.Async.Lifted
 import Control.Monad
 import Control.Monad.Except
-import Control.Monad.Reader.Class
-import Data.Text as T
-import qualified Data.Text.IO as TIO
+import Data.Aeson.Text (encodeToLazyText)
+import Data.Text.Lazy (toStrict)
+import Data.Text
+import Logging
 import Providers.API
 import Servant.Client hiding (Response)
 import Telegram.Bot.API hiding (Message)
 import qualified Telegram.Bot.API as TBA
-import Telegram.Bot.Simple.BotApp.Internal ( startPolling )
+import Telegram.Bot.Simple.BotApp.Internal (startPolling)
 import TextShow
-import Data.Aeson.Text (encodeToLazyText)
-import Data.Text.Lazy (toStrict)
+
+(logInfo, logError) = mkLog "Telegram"
 
 bot :: Endpoint -> ClientM ()
 bot endpoint = do
   async $ startPolling onUpdate
   publishLoop
   where
-    onUpdate Update {..} = maybe (return ()) (onMessageReceived endpoint) msg
+    onUpdate Update {..} = maybe ignoreMsg handleMsg msg
       where
         msg = do
           message  <- updateMessage
@@ -35,12 +36,19 @@ bot endpoint = do
                             (Channel (ChannelId . toStrict . encodeToLazyText $ channelId) channelName)
                             content
 
+        ignoreMsg = logInfo $ "Skipping incoming message: " <> showt msg
+
+        handleMsg msg = do
+          logInfo "Handling incoming message"
+          onMessageReceived endpoint msg
+
+
     publishLoop = forever $ do
-      liftIO $ putStrLn "Awaiting (Telegram) message dispatch"
+      logInfo "Awaiting message dispatch..."
       (message, targetChannelId) <- liftIO $ awaitMessageDispatched endpoint
       let body = formatMessage message
-      liftIO . TIO.putStrLn $ mconcat ["Sending ", body, " to ", showt targetChannelId]
-      sendTo (ChatId . read . T.unpack . unChannelId $ targetChannelId) body
+      logInfo $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
+      sendTo (ChatId . read . unpack . unChannelId $ targetChannelId) body
 
 sendTo :: ChatId -> Text -> ClientM (Response TBA.Message)
 sendTo chatId msgText = sendMessage SendMessageRequest { sendMessageChatId                = SomeChatId chatId
