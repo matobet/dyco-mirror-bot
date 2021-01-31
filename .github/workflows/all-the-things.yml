@@ -7,7 +7,7 @@ jobs:
       - uses: actions/checkout@master
         with:
           fetch-depth: 1
-      - run: docker run --rm -i hadolint/hadolint:latest-alpine hadolint --ignore SC1091 - < Dockerfile
+      - run: docker run --rm -i hadolint/hadolint:latest-alpine hadolint --ignore SC1091 --ignore DL3008 - < Dockerfile
   deploy:
     needs: hadolint
     runs-on: ubuntu-latest

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6ccebdc8635674404c0bccf97ddbfbbd543984176f123ea40156112ea3415569
+-- hash: f1fb71f7cf662c151611e90e25b28529a536dcc2ca411da0e947ed3931e7da9d
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -94,7 +94,7 @@ test-suite dyco-mirror-bot-test
   hs-source-dirs:
       test
   default-extensions: DataKinds DeriveAnyClass DeriveGeneric DerivingStrategies DerivingVia DuplicateRecordFields FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving MultiParamTypeClasses NamedFieldPuns OverloadedLabels OverloadedStrings RecordWildCards TemplateHaskell TransformListComp TypeFamilies UndecidableInstances ViewPatterns
-  ghc-options: -threaded
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.7 && <5

@@ -1,17 +1,22 @@
-FROM debian:bullseye
-COPY . /build
-WORKDIR /build
+FROM magicpak/haskell:8.8 AS build
 ENV USER=root
-RUN \
-	apt-get update &&\
-	apt-get install --no-install-recommends -y 'nix-setup-systemd=2.3.7+dfsg1-1' 'ca-certificates=20210119' &&\
+RUN mkdir /build
+COPY app /build/app
+COPY src /build/src
+COPY test /build/test
+COPY dyco-mirror-bot.cabal /build/
+WORKDIR /build
+RUN cabal update && cabal build -j
+RUN mv dist-newstyle/build/*/ghc-8.8.4/dyco-mirror-bot-0.1.0.0/x/dyco-mirror-bot-exe/build/dyco-mirror-bot-exe/dyco-mirror-bot-exe ./dyco-mirror-bot-exe &&\
+	magicpak -v ./dyco-mirror-bot-exe /bundle
+
+FROM ubuntu:focal
+RUN apt-get update &&\
+	apt-get install --no-install-recommends ca-certificates -y &&\
 	apt-get clean &&\
 	rm -rf /var/lib/apt/lists/*
-RUN \
-	echo 'filter-syscalls = false' >> /etc/nix/nix.conf &&\
-	echo 'substituters = https://cache.nixos.org https://hydra.iohk.io https://matobet-rpi.cachix.org' >> /etc/nix/nix.conf &&\
-	echo 'trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= matobet-rpi.cachix.org-1:FBU5CNeBaGQOsDn51HkthVEvHxHAur4t58AvFJLRNSg=' >> /etc/nix/nix.conf &&\
-	. /usr/share/doc/nix-bin/examples/nix-profile.sh &&\
-	nix-channel --add https://nixos.org/channels/nixpkgs-unstable &&\
-	nix-channel --update &&\
-	nix-build -A dyco-mirror-bot.components.exes.dyco-mirror-bot-exe
+
+COPY entrypoint.sh /
+COPY --from=build /bundle /usr
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "/usr/dyco-mirror-bot-exe" ]
