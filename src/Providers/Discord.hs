@@ -8,8 +8,11 @@ import Data.Text as T
 import Discord
 import qualified Discord.Types as DT
 import qualified Discord.Requests as DR
+import Logging
 import Providers.API
-import Control.Monad.IO.Class
+import TextShow
+
+(logInfo, _logError) = mkLog "Discord"
 
 instance ProviderEndpoint DiscordConfig where
   spawnProviderEndpoint DiscordConfig {..} = withNewEndpoint $ \endpoint -> void . async . runDiscord $ def
@@ -20,7 +23,7 @@ instance ProviderEndpoint DiscordConfig where
     where
       eventHandler :: Endpoint -> DT.Event -> DiscordHandler ()
       eventHandler endpoint (DT.MessageCreate m) = do
-        liftIO $ putStrLn "Handling Discord event"
+        logInfo "Handling incoming message"
         Right channelName <- fmap DT.channelName <$> getChannel cid
         let channel = Channel channelId channelName
         when (content /= "") $ onMessageReceived endpoint Message { .. } -- ignore images for now
@@ -34,10 +37,11 @@ instance ProviderEndpoint DiscordConfig where
 
       spawnSender :: Endpoint -> DiscordHandler ()
       spawnSender endpoint = void . async . forever $ do
-        liftIO $ putStrLn "Awaiting (Discord) message dispatch"
+        logInfo "Awaiting message dispatch..."
         (message, targetChannelId) <- awaitMessageDispatched endpoint
         let body      = formatMessage message
             channelId = read . T.unpack . unChannelId $ targetChannelId
+        logInfo $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
         Right _ <- restCall $ DR.CreateMessage channelId body
         return ()
 

@@ -7,6 +7,7 @@ import Core
 import Data.Maybe
 import Data.Text (Text)
 import GHC.Exts
+import Logging
 import Optics
 import Providers.API
 import Providers.Telegram ()
@@ -18,35 +19,44 @@ main :: IO ()
 main = do
   configFile <- fromMaybe "dyco-mirror.yml" <$> lookupEnv "DYCO_MIRROR_CONF"
   config@Config { name = botName, telegram = telegramConfig, discord = discordConfig, mirrors } <- readConfig configFile
-  print config
+
+  logInfo $ "Loaded config: " <> showt config
+
   telegram <- spawnProviderEndpoint telegramConfig
   discord  <- spawnProviderEndpoint discordConfig
-  runMirrorMap botName mirrors [
-      (Telegram, (telegram, telegramConfig ^. #channels))
+
+  runMirrorMap botName mirrors
+    [ (Telegram, (telegram, telegramConfig ^. #channels))
     , (Discord, (discord, discordConfig ^. #channels))
     ]
+
+(logInfo, logError) = mkLog "Mirror"
 
 runMirrorMap :: Text -> [MirrorConfig] -> [(Provider, (Endpoint, [ChannelConfig]))] -> IO ()
 runMirrorMap botName mirrors endpoints = do
   forConcurrently_ mirrorsBySource $ \(sourceProvider, mirrors) -> do
     case lookup sourceProvider endpoints of
-      Nothing -> fail $ "Source provider " <> show sourceProvider <> " not configured"
+      Nothing ->
+        logError $ "Source provider " <> showt sourceProvider <> " not configured"
+
       Just (sourceEndpoint, _) -> forever $ do
-        putStrLn $ "Listening on " <> show sourceProvider <> " events..."
+        logInfo $ "Listening on " <> showt sourceProvider <> " events..."
         message <- awaitMessageReceived sourceEndpoint
-        printT message
-        printT $ message ^. #user % #name
+
         unless (message ^. #user % #name == botName) $ do -- skip messages from the bot itself
           let matchingMirrors = filter (\MirrorConfig{source = ChannelRef{channelName}} -> channelName == message ^. #channel % #name) mirrors
-          putStrLn $ "Matched mirrors: " <> show matchingMirrors
+          logInfo $ "Matched mirrors: " <> showt matchingMirrors
+
           forM_ matchingMirrors $ \MirrorConfig{target = ChannelRef{provider = targetProvider, channelName = targetChannelName}} -> do
             case lookup targetProvider endpoints of
-              Nothing -> fail $ mconcat [ "Target provider ", show targetProvider, " not configured"]
+              Nothing ->
+                logError $ mconcat [ "Target provider ", showt targetProvider, " not configured"]
+
               Just (targetEndpoint, channels) ->
                 case channelIdByName targetChannelName channels of
-                  Nothing -> fail $ mconcat ["Channel: ", show targetChannelName, " not found in provider", show targetProvider]
+                  Nothing -> logError $ mconcat ["Channel: ", showt targetChannelName, " not found in provider", showt targetProvider]
                   Just targetChannelId -> do
-                    putStrLn "PUBLISHING MESSAGE"
+                    logInfo $ "Delegaing to provider " <> showt targetProvider <> " for dispatch"
                     publishMessage targetEndpoint message (ChannelId targetChannelId)
   where
     mirrorsBySource =

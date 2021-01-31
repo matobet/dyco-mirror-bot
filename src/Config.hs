@@ -8,25 +8,35 @@ import Data.Text
 import qualified Data.Yaml as Y
 import GHC.Generics
 import Optics.TH
+import TextShow
+import TextShow.Generic
 
 data Config = Config
   { name :: Text,
     telegram :: TelegramConfig,
     discord :: DiscordConfig,
     mirrors :: [MirrorConfig]
-  } deriving (Show, Generic, FromJSON)
+  }
+  deriving (Generic, FromJSON)
+  deriving TextShow via FromGeneric Config
 
 data TelegramConfig = TelegramConfig
   { token :: Text
   , channels :: [ChannelConfig]
-  } deriving (Show, Generic, FromJSON)
+  }
+  deriving (Generic, FromJSON)
+  deriving TextShow via FromGeneric TelegramConfig
 
 data DiscordConfig = DiscordConfig
   { token :: Text
   , channels :: [ChannelConfig]
-  } deriving (Show, Generic, FromJSON)
+  }
+  deriving (Generic, FromJSON)
+  deriving TextShow via FromGeneric DiscordConfig
 
-data ChannelConfig = ChannelConfig {name :: Text, id :: Text} deriving (Show)
+data ChannelConfig = ChannelConfig {name :: Text, id :: Text}
+  deriving Generic
+  deriving TextShow via FromGeneric ChannelConfig
 
 channelIdByName :: Text -> [ChannelConfig] -> Maybe Text
 channelIdByName name channels = lookup name $ (\ChannelConfig {..} -> (name, id)) <$> channels
@@ -38,11 +48,17 @@ instance {-# OVERLAPPING #-} FromJSON [ChannelConfig] where
       parseChannel _                    = fail "Expected a key-value String pair"
   parseJSON _ = fail "Expected an object"
 
-data MirrorConfig = MirrorConfig {source :: ChannelRef, target :: ChannelRef} deriving (Show, Generic, FromJSON, Eq)
+data MirrorConfig = MirrorConfig {source :: ChannelRef, target :: ChannelRef}
+  deriving (Generic, FromJSON, Eq)
+  deriving TextShow via FromGeneric MirrorConfig
 
-data Provider = Telegram | Discord deriving (Show, Generic, FromJSON, Ord, Eq)
+data Provider = Telegram | Discord
+  deriving (Generic, FromJSON, Ord, Eq)
+  deriving TextShow via FromGeneric Provider
 
-data ChannelRef = ChannelRef {provider :: Provider, channelName :: Text} deriving (Show, Eq)
+data ChannelRef = ChannelRef {provider :: Provider, channelName :: Text}
+  deriving (Generic, Eq)
+  deriving TextShow via FromGeneric ChannelRef
 
 instance FromJSON ChannelRef where
   parseJSON (String (splitOn "/" -> [provider, channelName])) =
