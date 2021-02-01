@@ -23,6 +23,17 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Cache Nix Store
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-nix-store
+        with:
+          path: /nix/store
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Setup Nix
         uses: cachix/install-nix-action@v12
         with:
