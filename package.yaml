@@ -29,6 +29,8 @@ dependencies:
 - optics
 - optics-th
 - pointless-fun
+- prometheus-client
+- prometheus-metrics-ghc
 - servant-client
 - stm
 - telegram-bot-simple
@@ -36,6 +38,9 @@ dependencies:
 - text-show
 - transformers-base
 - unordered-containers
+- wai
+- wai-middleware-prometheus
+- warp
 - yaml
 
 default-extensions:
@@ -68,6 +73,8 @@ executables:
     source-dirs:         app
     ghc-options:
     - -threaded
+    - -rtsopts
+    - '"-with-rtsopts=-N -T"'
     dependencies:
     - dyco-mirror-bot
 
