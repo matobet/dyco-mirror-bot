@@ -42,6 +42,7 @@ dependencies:
 - wai
 - wai-middleware-prometheus
 - warp
+- with-utf8
 - yaml
 
 default-extensions:
@@ -77,6 +78,7 @@ executables:
     - -threaded
     - -rtsopts
     - '"-with-rtsopts=-N -T"'
+    - -Wall
     dependencies:
     - dyco-mirror-bot
 

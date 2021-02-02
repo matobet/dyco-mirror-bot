@@ -8,6 +8,7 @@ import Data.Maybe
 import Data.Text (Text)
 import GHC.Exts
 import Logging
+import Main.Utf8 (withUtf8)
 import qualified Network.Wai.Handler.Warp as Warp
 import qualified Network.Wai.Middleware.Prometheus as Prometheus
 import Optics
@@ -21,14 +22,14 @@ import TextShow
 import Text.Read (readMaybe)
 
 main :: IO ()
-main = do
+main = withUtf8 $ do
   setupLogging
 
   prometheusPort <- fromMaybe 9100 . (readMaybe =<<) <$> lookupEnv "DYCO_MIRROR_PROMETHEUS_PORT"
-  Prometheus.register Prometheus.ghcMetrics 
+  void $ Prometheus.register Prometheus.ghcMetrics
 
   logInfo $ "Running Prometheus metrics endpoint on port: " <> showt prometheusPort
-  async $ Warp.run prometheusPort Prometheus.metricsApp 
+  void . async $ Warp.run prometheusPort Prometheus.metricsApp
 
   configFile <- fromMaybe "dyco-mirror.yml" <$> lookupEnv "DYCO_MIRROR_CONF"
   config@Config { name = botName, telegram = telegramConfig, discord = discordConfig, mirrors } <- readConfig configFile
