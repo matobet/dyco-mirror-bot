@@ -57,6 +57,7 @@ default-extensions:
 - NamedFieldPuns
 - OverloadedLabels
 - OverloadedStrings
+- RankNTypes
 - RecordWildCards
 - TemplateHaskell
 - TransformListComp

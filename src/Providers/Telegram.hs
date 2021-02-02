@@ -1,3 +1,5 @@
+
+{-# LANGUAGE NoMonomorphismRestriction #-}
 module Providers.Telegram where
 
 import Config
@@ -7,7 +9,7 @@ import Control.Monad
 import Control.Monad.Except
 import Data.Aeson.Text (encodeToLazyText)
 import Data.Text.Lazy (toStrict)
-import Data.Text
+import Data.Text (Text, unpack, pack)
 import Logging
 import Providers.API
 import Servant.Client hiding (Response)
@@ -62,4 +64,10 @@ sendTo chatId msgText = sendMessage SendMessageRequest { sendMessageChatId      
 
 instance ProviderEndpoint TelegramConfig where
   spawnProviderEndpoint TelegramConfig {..} =
-    withNewEndpoint $ \endpoint -> void . async $ defaultRunBot (Token token) (bot endpoint)
+    withNewEndpoint $ void . async . runTelegramWithErrorHandling
+    where
+      runTelegramWithErrorHandling endpoint = do
+        res <- defaultRunBot (Token token) (bot endpoint)
+        case res of
+          Left err -> logError $ "Telegram endpoint failed with: " <> pack (show err)
+          Right () -> return ()
