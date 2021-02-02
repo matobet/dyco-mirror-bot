@@ -62,6 +62,7 @@ sendTo chatId msgText = void . async $ do
                                         , sendMessageReplyToMessageId      = Nothing
                                         , sendMessageReplyMarkup           = Nothing
                                         }
+  logInfo $ "sendMessage returned: " <> pack (show res)
   unless (responseOk res) . logError $ "Telegram publish failed with: " <> pack (show res)
 
 instance ProviderEndpoint TelegramConfig where
