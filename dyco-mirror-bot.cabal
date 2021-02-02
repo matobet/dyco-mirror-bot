@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9db3a8d7396dfb1c0740ea9d56761afd7bcf192b7c8e418baa6a5c5afa835851
+-- hash: 1a85755b253a10acbfc4c0a3a4e99645f944e3b8e56b6dbb0ecc09869147f77b
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -48,6 +48,8 @@ library
     , optics
     , optics-th
     , pointless-fun
+    , prometheus-client
+    , prometheus-metrics-ghc
     , servant-client
     , stm
     , telegram-bot-simple
@@ -55,6 +57,9 @@ library
     , text-show
     , transformers-base
     , unordered-containers
+    , wai
+    , wai-middleware-prometheus
+    , warp
     , yaml
   default-language: Haskell2010
 
@@ -65,7 +70,7 @@ executable dyco-mirror-bot-exe
   hs-source-dirs:
       app
   default-extensions: DataKinds DeriveAnyClass DeriveGeneric DerivingStrategies DerivingVia DuplicateRecordFields FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving MultiParamTypeClasses NamedFieldPuns OverloadedLabels OverloadedStrings RecordWildCards TemplateHaskell TransformListComp TypeFamilies UndecidableInstances ViewPatterns
-  ghc-options: -threaded
+  ghc-options: -threaded -rtsopts "-with-rtsopts=-N -T"
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -77,6 +82,8 @@ executable dyco-mirror-bot-exe
     , optics
     , optics-th
     , pointless-fun
+    , prometheus-client
+    , prometheus-metrics-ghc
     , servant-client
     , stm
     , telegram-bot-simple
@@ -84,6 +91,9 @@ executable dyco-mirror-bot-exe
     , text-show
     , transformers-base
     , unordered-containers
+    , wai
+    , wai-middleware-prometheus
+    , warp
     , yaml
   default-language: Haskell2010
 
@@ -107,6 +117,8 @@ test-suite dyco-mirror-bot-test
     , optics
     , optics-th
     , pointless-fun
+    , prometheus-client
+    , prometheus-metrics-ghc
     , servant-client
     , stm
     , telegram-bot-simple
@@ -114,5 +126,8 @@ test-suite dyco-mirror-bot-test
     , text-show
     , transformers-base
     , unordered-containers
+    , wai
+    , wai-middleware-prometheus
+    , warp
     , yaml
   default-language: Haskell2010

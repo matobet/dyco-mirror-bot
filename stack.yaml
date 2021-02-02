@@ -43,8 +43,10 @@ packages:
 extra-deps:
 - discord-haskell-1.8.1
 - emoji-0.1.0.2
+- prometheus-metrics-ghc-1.0.1.1
 - servant-multipart-0.11.5
 - telegram-bot-simple-0.3.5
+- wai-middleware-prometheus-1.0.0
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
