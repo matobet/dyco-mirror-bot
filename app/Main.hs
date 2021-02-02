@@ -22,6 +22,8 @@ import Text.Read (readMaybe)
 
 main :: IO ()
 main = do
+  setupLogging
+
   prometheusPort <- fromMaybe 9100 . (readMaybe =<<) <$> lookupEnv "DYCO_MIRROR_PROMETHEUS_PORT"
   Prometheus.register Prometheus.ghcMetrics 
 
