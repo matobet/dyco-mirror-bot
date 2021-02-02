@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fd42a5b7dc6f590b160f06e35c771e68aaebdecb9fb9a419e43713797cc94eba
+-- hash: 17e449c1a003ac5eea7408e8e43cf117fcec0d5c6ae18e08ecd00b003ab2e9b4
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -55,6 +55,7 @@ library
     , telegram-bot-simple
     , text
     , text-show
+    , time
     , transformers-base
     , unordered-containers
     , wai
@@ -89,6 +90,7 @@ executable dyco-mirror-bot-exe
     , telegram-bot-simple
     , text
     , text-show
+    , time
     , transformers-base
     , unordered-containers
     , wai
@@ -124,6 +126,7 @@ test-suite dyco-mirror-bot-test
     , telegram-bot-simple
     , text
     , text-show
+    , time
     , transformers-base
     , unordered-containers
     , wai

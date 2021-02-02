@@ -36,6 +36,7 @@ dependencies:
 - telegram-bot-simple
 - text
 - text-show
+- time
 - transformers-base
 - unordered-containers
 - wai
