@@ -12,7 +12,7 @@ import Logging
 import Providers.API
 import TextShow
 
-(logInfo, _logError) = mkLog "Discord"
+(logInfo, logError) = mkLog "Discord"
 
 instance ProviderEndpoint DiscordConfig where
   spawnProviderEndpoint DiscordConfig {..} = withNewEndpoint $ \endpoint -> void . async . runDiscord $ def
@@ -42,6 +42,9 @@ instance ProviderEndpoint DiscordConfig where
         let body      = formatMessage message
             channelId = read . T.unpack . unChannelId $ targetChannelId
         logInfo $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
-        Right _ <- restCall $ DR.CreateMessage channelId body
-        return ()
+        async $ do
+          res <- restCall $ DR.CreateMessage channelId body
+          case res of
+            Left err -> logError $ "Discord publish failed with: " <> pack (show err)
+            Right _ -> return ()
 

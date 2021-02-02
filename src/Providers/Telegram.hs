@@ -52,15 +52,17 @@ bot endpoint = do
       logInfo $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
       sendTo (ChatId . read . unpack . unChannelId $ targetChannelId) body
 
-sendTo :: ChatId -> Text -> ClientM (Response TBA.Message)
-sendTo chatId msgText = sendMessage SendMessageRequest { sendMessageChatId                = SomeChatId chatId
-                                                       , sendMessageText                  = msgText
-                                                       , sendMessageParseMode             = Nothing
-                                                       , sendMessageDisableWebPagePreview = Nothing
-                                                       , sendMessageDisableNotification   = Nothing
-                                                       , sendMessageReplyToMessageId      = Nothing
-                                                       , sendMessageReplyMarkup           = Nothing
-                                                       }
+sendTo :: ChatId -> Text -> ClientM ()
+sendTo chatId msgText = void . async $ do
+  res <- sendMessage SendMessageRequest { sendMessageChatId                = SomeChatId chatId
+                                        , sendMessageText                  = msgText
+                                        , sendMessageParseMode             = Nothing
+                                        , sendMessageDisableWebPagePreview = Nothing
+                                        , sendMessageDisableNotification   = Nothing
+                                        , sendMessageReplyToMessageId      = Nothing
+                                        , sendMessageReplyMarkup           = Nothing
+                                        }
+  unless (responseOk res) . logError $ "Telegram publish failed with: " <> pack (show res)
 
 instance ProviderEndpoint TelegramConfig where
   spawnProviderEndpoint TelegramConfig {..} =
