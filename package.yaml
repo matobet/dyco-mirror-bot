@@ -42,6 +42,7 @@ dependencies:
 - wai
 - wai-middleware-prometheus
 - warp
+- with-utf8
 - yaml
 
 default-extensions:

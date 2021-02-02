@@ -7,7 +7,9 @@ import Core
 import Data.Maybe
 import Data.Text (Text)
 import GHC.Exts
+import GHC.IO.Encoding (getLocaleEncoding, setLocaleEncoding, utf8)
 import Logging
+import Main.Utf8 (withUtf8)
 import qualified Network.Wai.Handler.Warp as Warp
 import qualified Network.Wai.Middleware.Prometheus as Prometheus
 import Optics
@@ -21,7 +23,9 @@ import TextShow
 import Text.Read (readMaybe)
 
 main :: IO ()
-main = do
+main = withUtf8 $ do
+  putStrLn . ("I was run with encoding: " <> ) . show =<< getLocaleEncoding
+
   setupLogging
 
   prometheusPort <- fromMaybe 9100 . (readMaybe =<<) <$> lookupEnv "DYCO_MIRROR_PROMETHEUS_PORT"

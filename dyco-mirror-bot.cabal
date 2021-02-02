@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 17e449c1a003ac5eea7408e8e43cf117fcec0d5c6ae18e08ecd00b003ab2e9b4
+-- hash: d8791ec3e74a5e4a37ce9833fd9402ae435242196db2cc622485c7995f5c91cd
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -61,6 +61,7 @@ library
     , wai
     , wai-middleware-prometheus
     , warp
+    , with-utf8
     , yaml
   default-language: Haskell2010
 
@@ -96,6 +97,7 @@ executable dyco-mirror-bot-exe
     , wai
     , wai-middleware-prometheus
     , warp
+    , with-utf8
     , yaml
   default-language: Haskell2010
 
@@ -132,5 +134,6 @@ test-suite dyco-mirror-bot-test
     , wai
     , wai-middleware-prometheus
     , warp
+    , with-utf8
     , yaml
   default-language: Haskell2010
