@@ -17,6 +17,8 @@ import Telegram.Bot.API hiding (Message)
 import qualified Telegram.Bot.API as TBA
 import Telegram.Bot.Simple.BotApp.Internal (startPolling)
 import TextShow
+import Control.Applicative
+import Data.Maybe
 
 (logInfo, logError) = mkLog "Telegram"
 
@@ -29,7 +31,8 @@ bot endpoint = do
       where
         msg = do
           message  <- updateMessage
-          userName <- userUsername =<< messageFrom message
+          user <- messageFrom message
+          let userName  = fromMaybe (userFirstName user) $ userUsername user
           let channel   = messageChat message
           let channelId = chatId channel
           channelName <- chatTitle channel
