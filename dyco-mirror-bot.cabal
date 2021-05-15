@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 113c96a7cb276e5e13522a0bae732c0cf8b08a49b73be9e2f10d4d520ca7579f
+-- hash: 18f4b8a777631e68a3b0d5162db45bb19e62fbb882b158924a576354b7ed6ece
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -37,7 +37,27 @@ library
       Paths_dyco_mirror_bot
   hs-source-dirs:
       src
-  default-extensions: DataKinds DeriveAnyClass DeriveGeneric DerivingStrategies DerivingVia DuplicateRecordFields FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving MultiParamTypeClasses NamedFieldPuns OverloadedLabels OverloadedStrings RankNTypes RecordWildCards TemplateHaskell TransformListComp TypeFamilies UndecidableInstances ViewPatterns
+  default-extensions:
+      DataKinds
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      DerivingVia
+      DuplicateRecordFields
+      FlexibleContexts
+      FlexibleInstances
+      GeneralizedNewtypeDeriving
+      MultiParamTypeClasses
+      NamedFieldPuns
+      OverloadedLabels
+      OverloadedStrings
+      RankNTypes
+      RecordWildCards
+      TemplateHaskell
+      TransformListComp
+      TypeFamilies
+      UndecidableInstances
+      ViewPatterns
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -71,7 +91,27 @@ executable dyco-mirror-bot-exe
       Paths_dyco_mirror_bot
   hs-source-dirs:
       app
-  default-extensions: DataKinds DeriveAnyClass DeriveGeneric DerivingStrategies DerivingVia DuplicateRecordFields FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving MultiParamTypeClasses NamedFieldPuns OverloadedLabels OverloadedStrings RankNTypes RecordWildCards TemplateHaskell TransformListComp TypeFamilies UndecidableInstances ViewPatterns
+  default-extensions:
+      DataKinds
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      DerivingVia
+      DuplicateRecordFields
+      FlexibleContexts
+      FlexibleInstances
+      GeneralizedNewtypeDeriving
+      MultiParamTypeClasses
+      NamedFieldPuns
+      OverloadedLabels
+      OverloadedStrings
+      RankNTypes
+      RecordWildCards
+      TemplateHaskell
+      TransformListComp
+      TypeFamilies
+      UndecidableInstances
+      ViewPatterns
   ghc-options: -threaded -rtsopts "-with-rtsopts=-N -T" -Wall
   build-depends:
       aeson
@@ -108,7 +148,27 @@ test-suite dyco-mirror-bot-test
       Paths_dyco_mirror_bot
   hs-source-dirs:
       test
-  default-extensions: DataKinds DeriveAnyClass DeriveGeneric DerivingStrategies DerivingVia DuplicateRecordFields FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving MultiParamTypeClasses NamedFieldPuns OverloadedLabels OverloadedStrings RankNTypes RecordWildCards TemplateHaskell TransformListComp TypeFamilies UndecidableInstances ViewPatterns
+  default-extensions:
+      DataKinds
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      DerivingVia
+      DuplicateRecordFields
+      FlexibleContexts
+      FlexibleInstances
+      GeneralizedNewtypeDeriving
+      MultiParamTypeClasses
+      NamedFieldPuns
+      OverloadedLabels
+      OverloadedStrings
+      RankNTypes
+      RecordWildCards
+      TemplateHaskell
+      TransformListComp
+      TypeFamilies
+      UndecidableInstances
+      ViewPatterns
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson

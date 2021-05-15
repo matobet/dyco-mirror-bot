@@ -5,12 +5,12 @@
 
 packages:
 - completed:
-    hackage: discord-haskell-1.8.5@sha256:56265067a27de25c8f372b3ecf3c282d7c1927503ba59a5b0a9d01fd81e268a0,3562
+    hackage: discord-haskell-1.8.6@sha256:59aa6be20aa7ee107251beb2b98a185c9b656af8afc8da8ba6737808b24f2b45,3562
     pantry-tree:
       size: 2107
-      sha256: 47930963df17ed0e1946b058b55c5b32c9b93d062124ed72d8fefac61e307cf5
+      sha256: 4cc7b8f7c38a8618e0fdeba223bb1cd7bd9caca0df75016b2d866ac2a7619d82
   original:
-    hackage: discord-haskell-1.8.5
+    hackage: discord-haskell-1.8.6
 - completed:
     hackage: emoji-0.1.0.2@sha256:d995572a5c7dcd28f98eb15c6e387a7b3bda1ac2477ab0d9dba8580d5d7b161f,1273
     pantry-tree:
@@ -26,12 +26,12 @@ packages:
   original:
     hackage: prometheus-metrics-ghc-1.0.1.1
 - completed:
-    hackage: servant-multipart-0.11.5@sha256:1633f715b5b53d648a1da69839bdc5046599f4f7244944d4bbf852dba38d8f4b,2319
+    hackage: servant-multipart-0.12@sha256:aa81dd0478270ade4a21b75611d5bc9cce8107df2e89c37b9964a3421629825d,2761
     pantry-tree:
-      size: 333
-      sha256: b3e1fd2ad2e654475be000c2f0ac6f717b5499436fa73eec50ceccddf352dcec
+      size: 386
+      sha256: 51c4e9e8be3ee80689bb6df46aee484a4f434dbeb33f4379ed8d1741fe4631cd
   original:
-    hackage: servant-multipart-0.11.5
+    hackage: servant-multipart-0.12
 - completed:
     hackage: telegram-bot-simple-0.3.5@sha256:c325cd48830a38115418ca5e275ff6a713dc63689239a58f1b13bb44dc1d3a76,3601
     pantry-tree:
@@ -48,7 +48,7 @@ packages:
     hackage: wai-middleware-prometheus-1.0.0
 snapshots:
 - completed:
-    size: 567037
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/9.yaml
-    sha256: d7d8d5106e53d1669964bd8bd2b0f88a5ad192d772f5376384b76738fd992311
-  original: lts-17.9
+    size: 567672
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/11.yaml
+    sha256: 03181cdbeb671eb605bbcf6f285bea4d094b6ac7433a0e14a9f1dd54ad995938
+  original: lts-17.11
