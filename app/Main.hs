@@ -28,13 +28,13 @@ main = withUtf8 $ do
   prometheusPort <- fromMaybe 9100 . (readMaybe =<<) <$> lookupEnv "DYCO_MIRROR_PROMETHEUS_PORT"
   void $ Prometheus.register Prometheus.ghcMetrics
 
-  logInfo $ "Running Prometheus metrics endpoint on port: " <> showt prometheusPort
+  log' Info $ "Running Prometheus metrics endpoint on port: " <> showt prometheusPort
   void . async $ Warp.run prometheusPort Prometheus.metricsApp
 
   configFile <- fromMaybe "dyco-mirror.yml" <$> lookupEnv "DYCO_MIRROR_CONF"
   config@Config { name = botName, telegram = telegramConfig, discord = discordConfig, mirrors } <- readConfig configFile
 
-  logInfo $ "Loaded config: " <> showt config
+  log' Info $ "Loaded config: " <> showt config
 
   telegram <- spawnProviderEndpoint telegramConfig
   discord  <- spawnProviderEndpoint discordConfig
@@ -44,33 +44,34 @@ main = withUtf8 $ do
     , (Discord, (discord, discordConfig ^. #channels))
     ]
 
-(logInfo, logError) = mkLog "Mirror"
+log' :: Logger
+log' = mkLog "Mirror"
 
 runMirrorMap :: Text -> [MirrorConfig] -> [(Provider, (Endpoint, [ChannelConfig]))] -> IO ()
 runMirrorMap botName mirrors endpoints = do
   forConcurrently_ mirrorsBySource $ \(sourceProvider, mirrors) -> do
     case lookup sourceProvider endpoints of
       Nothing ->
-        logError $ "Source provider " <> showt sourceProvider <> " not configured"
+        log' Error $ "Source provider " <> showt sourceProvider <> " not configured"
 
       Just (sourceEndpoint, _) -> forever $ do
-        logInfo $ "Listening on " <> showt sourceProvider <> " events..."
+        log' Info $ "Listening on " <> showt sourceProvider <> " events..."
         message <- awaitMessageReceived sourceEndpoint
 
         unless (message ^. #user % #name == botName) $ do -- skip messages from the bot itself
           let matchingMirrors = filter (\MirrorConfig{source = ChannelRef{channelName}} -> channelName == message ^. #channel % #name) mirrors
-          logInfo $ "Matched mirrors: " <> showt matchingMirrors
+          log' Info $ "Matched mirrors: " <> showt matchingMirrors
 
           forM_ matchingMirrors $ \MirrorConfig{target = ChannelRef{provider = targetProvider, channelName = targetChannelName}} -> do
             case lookup targetProvider endpoints of
               Nothing ->
-                logError $ mconcat [ "Target provider ", showt targetProvider, " not configured"]
+                log' Error $ mconcat [ "Target provider ", showt targetProvider, " not configured"]
 
               Just (targetEndpoint, channels) ->
                 case channelIdByName targetChannelName channels of
-                  Nothing -> logError $ mconcat ["Channel: ", showt targetChannelName, " not found in provider", showt targetProvider]
+                  Nothing -> log' Error $ mconcat ["Channel: ", showt targetChannelName, " not found in provider", showt targetProvider]
                   Just targetChannelId -> do
-                    logInfo $ "Delegaing to provider " <> showt targetProvider <> " for dispatch"
+                    log' Info $ "Delegaing to provider " <> showt targetProvider <> " for dispatch"
                     publishMessage targetEndpoint message (ChannelId targetChannelId)
   where
     mirrorsBySource =

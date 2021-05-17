@@ -14,11 +14,16 @@ setupLogging = do
   hSetBuffering stdout LineBuffering
   hSetBuffering stderr LineBuffering
 
-mkLog :: forall m. MonadIO m => Text -> (Text -> m (), Text -> m ())
-mkLog name = (logInfo, logError)
+data LogType = Info | Error
+
+type Logger = forall m. MonadIO m => LogType -> Text -> m ()
+
+mkLog :: Text -> Logger
+mkLog name = log
  where
-  logInfo = liftIO . TIO.putStrLn <=< prefixWithTime . (wrappedName <>) . ("INFO: " <>)
-  logError = liftIO . TIO.hPutStrLn stderr <=< prefixWithTime . (wrappedName <>) . ("ERROR: " <>)
+  log Info = liftIO . TIO.putStrLn <=< prefixWithTime . (wrappedName <>) . ("INFO: " <>)
+  log Error = liftIO . TIO.hPutStrLn stderr <=< prefixWithTime . (wrappedName <>) . ("ERROR: " <>)
+
   wrappedName = mconcat ["[", name, "] "]
   prefixWithTime str = do
     time <- liftIO $ utcToLocalZonedTime =<< getCurrentTime

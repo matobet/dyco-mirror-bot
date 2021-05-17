@@ -12,10 +12,11 @@ import Logging
 import Providers.API
 import TextShow
 
-(logInfo, logError) = mkLog "Discord"
+log' :: Logger
+log' = mkLog "Discord"
 
 instance ProviderEndpoint DiscordConfig where
-  spawnProviderEndpoint DiscordConfig {..} = withNewEndpoint $ \endpoint -> void . async . runDiscord $ def
+  spawnProviderEndpoint DiscordConfig {..} = withNewEndpoint $ \endpoint -> void . async $ log' Error =<< runDiscord def
     { discordToken   = token
     , discordOnStart = spawnSender endpoint
     , discordOnEvent = eventHandler endpoint
@@ -23,7 +24,7 @@ instance ProviderEndpoint DiscordConfig where
     where
       eventHandler :: Endpoint -> DT.Event -> DiscordHandler ()
       eventHandler endpoint (DT.MessageCreate m) = do
-        logInfo "Handling incoming message"
+        log' Info "Handling incoming message"
         Right channelName <- fmap DT.channelName <$> getChannel cid
         let channel = Channel channelId channelName
         when (content /= "") $ onMessageReceived endpoint Message { .. } -- ignore images for now
@@ -37,14 +38,14 @@ instance ProviderEndpoint DiscordConfig where
 
       spawnSender :: Endpoint -> DiscordHandler ()
       spawnSender endpoint = void . async . forever $ do
-        logInfo "Awaiting message dispatch..."
+        log' Info "Awaiting message dispatch..."
         (message, targetChannelId) <- awaitMessageDispatched endpoint
         let body      = formatMessage message
             channelId = read . T.unpack . unChannelId $ targetChannelId
-        logInfo $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
+        log' Info $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
         async $ do
           res <- restCall $ DR.CreateMessage channelId body
           case res of
-            Left err -> logError $ "Discord publish failed with: " <> pack (show err)
+            Left err -> log' Error $ "Discord publish failed with: " <> pack (show err)
             Right _ -> return ()
 

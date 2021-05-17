@@ -1,5 +1,4 @@
 
-{-# LANGUAGE NoMonomorphismRestriction #-}
 module Providers.Telegram where
 
 import Config
@@ -17,14 +16,14 @@ import Telegram.Bot.API hiding (Message)
 import qualified Telegram.Bot.API as TBA
 import Telegram.Bot.Simple.BotApp.Internal (startPolling)
 import TextShow
-import Control.Applicative
 import Data.Maybe
 
-(logInfo, logError) = mkLog "Telegram"
+log' :: Logger
+log' = mkLog "Telegram"
 
 bot :: Endpoint -> ClientM ()
 bot endpoint = do
-  async $ startPolling onUpdate
+  void . async $ startPolling onUpdate
   publishLoop
   where
     onUpdate Update {..} = maybe ignoreMsg handleMsg msg
@@ -41,18 +40,18 @@ bot endpoint = do
                             (Channel (ChannelId . toStrict . encodeToLazyText $ channelId) channelName)
                             content
 
-        ignoreMsg = logInfo $ "Skipping incoming message: " <> showt msg
+        ignoreMsg = log' Info $ "Skipping incoming message: " <> showt msg
 
         handleMsg msg = do
-          logInfo "Handling incoming message"
+          log' Info "Handling incoming message"
           onMessageReceived endpoint msg
 
 
     publishLoop = forever $ do
-      logInfo "Awaiting message dispatch..."
+      log' Info "Awaiting message dispatch..."
       (message, targetChannelId) <- liftIO $ awaitMessageDispatched endpoint
       let body = formatMessage message
-      logInfo $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
+      log' Info $ mconcat ["Dispatching ", body, " to ", showt targetChannelId]
       sendTo (ChatId . read . unpack . unChannelId $ targetChannelId) body
 
 sendTo :: ChatId -> Text -> ClientM ()
@@ -65,7 +64,7 @@ sendTo chatId msgText = void . async $ do
                                         , sendMessageReplyToMessageId      = Nothing
                                         , sendMessageReplyMarkup           = Nothing
                                         }
-  unless (responseOk res) . logError $ "Telegram publish failed with: " <> pack (show res)
+  unless (responseOk res) . log' Error $ "Telegram publish failed with: " <> pack (show res)
 
 instance ProviderEndpoint TelegramConfig where
   spawnProviderEndpoint TelegramConfig {..} =
@@ -74,5 +73,5 @@ instance ProviderEndpoint TelegramConfig where
       runTelegramWithErrorHandling endpoint = do
         res <- defaultRunBot (Token token) (bot endpoint)
         case res of
-          Left err -> logError $ "Telegram endpoint failed with: " <> pack (show err)
+          Left err -> log' Error $ "Telegram endpoint failed with: " <> pack (show err)
           Right () -> return ()
