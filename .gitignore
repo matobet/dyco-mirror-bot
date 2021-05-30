@@ -8,4 +8,7 @@ dyco-mirror*.yml
 dist-newstyle
 *.tar
 *.gz
+*.sig
+*.json
+config
 result

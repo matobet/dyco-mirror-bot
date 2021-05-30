@@ -13,26 +13,30 @@ import TextShow.Generic
 
 data Config = Config
   { name :: Text,
-    telegram :: TelegramConfig,
-    discord :: DiscordConfig,
+    telegram :: Telegram,
+    discord :: Discord,
     mirrors :: [MirrorConfig]
   }
   deriving (Generic, FromJSON)
   deriving TextShow via FromGeneric Config
 
-data TelegramConfig = TelegramConfig
+data ProviderConfig = ProviderConfig
   { token :: Text
+  , admins :: [Text]
   , channels :: [ChannelConfig]
   }
   deriving (Generic, FromJSON)
-  deriving TextShow via FromGeneric TelegramConfig
+  deriving TextShow via FromGeneric ProviderConfig
 
-data DiscordConfig = DiscordConfig
-  { token :: Text
-  , channels :: [ChannelConfig]
-  }
-  deriving (Generic, FromJSON)
-  deriving TextShow via FromGeneric DiscordConfig
+newtype Telegram = Telegram { unTelegram :: ProviderConfig }
+  deriving newtype (FromJSON)
+  deriving stock Generic
+  deriving TextShow via FromGeneric Telegram
+
+newtype Discord = Discord { unDiscord :: ProviderConfig }
+  deriving newtype (FromJSON)
+  deriving stock Generic
+  deriving TextShow via FromGeneric Discord
 
 data ChannelConfig = ChannelConfig {name :: Text, id :: Text}
   deriving Generic
@@ -52,11 +56,11 @@ data MirrorConfig = MirrorConfig {source :: ChannelRef, target :: ChannelRef}
   deriving (Generic, FromJSON, Eq)
   deriving TextShow via FromGeneric MirrorConfig
 
-data Provider = Telegram | Discord
+data ProviderType = TelegramPT | DiscordPT
   deriving (Generic, FromJSON, Ord, Eq)
-  deriving TextShow via FromGeneric Provider
+  deriving TextShow via FromGeneric ProviderType
 
-data ChannelRef = ChannelRef {provider :: Provider, channelName :: Text}
+data ChannelRef = ChannelRef {provider :: ProviderType, channelName :: Text}
   deriving (Generic, Eq)
   deriving TextShow via FromGeneric ChannelRef
 
@@ -64,8 +68,8 @@ instance FromJSON ChannelRef where
   parseJSON (String (splitOn "/" -> [provider, channelName])) =
     ChannelRef <$> parseProvider (toLower provider) <*> return channelName
     where
-      parseProvider "telegram" = return Telegram
-      parseProvider "discord"  = return Discord
+      parseProvider "telegram" = return TelegramPT
+      parseProvider "discord"  = return DiscordPT
       parseProvider _          = fail "Expected either <telegram> or <discord> chat provider"
   parseJSON _ = fail "Expected <provider/channel>"
 
@@ -73,8 +77,7 @@ readConfig :: String -> IO Config
 readConfig = BS.readFile >=> Y.decodeThrow
 
 makeFieldLabelsWith noPrefixFieldLabels ''Config
-makeFieldLabelsWith noPrefixFieldLabels ''TelegramConfig
-makeFieldLabelsWith noPrefixFieldLabels ''DiscordConfig
+makeFieldLabelsWith noPrefixFieldLabels ''ProviderConfig
 makeFieldLabelsWith noPrefixFieldLabels ''ChannelConfig
 makeFieldLabelsWith noPrefixFieldLabels ''MirrorConfig
 makeFieldLabelsWith noPrefixFieldLabels ''ChannelRef

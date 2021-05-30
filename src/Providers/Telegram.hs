@@ -42,9 +42,9 @@ bot endpoint = do
 
         ignoreMsg = log' Info $ "Skipping incoming message: " <> showt msg
 
-        handleMsg msg = do
+        handleMsg m = do
           log' Info "Handling incoming message"
-          onMessageReceived endpoint msg
+          onMessageReceived endpoint m
 
 
     publishLoop = forever $ do
@@ -66,9 +66,9 @@ sendTo chatId msgText = void . async $ do
                                         }
   unless (responseOk res) . log' Error $ "Telegram publish failed with: " <> pack (show res)
 
-instance ProviderEndpoint TelegramConfig where
-  spawnProviderEndpoint TelegramConfig {..} =
-    withNewEndpoint $ void . async . runTelegramWithErrorHandling
+instance ProviderEndpoint Telegram where
+  spawnProviderEndpoint (Telegram ProviderConfig{..}) =
+    withNewEndpoint TelegramPT $ void . async . runTelegramWithErrorHandling
     where
       runTelegramWithErrorHandling endpoint = do
         res <- defaultRunBot (Token token) (bot endpoint)

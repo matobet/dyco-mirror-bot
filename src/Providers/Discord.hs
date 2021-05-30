@@ -4,6 +4,7 @@ import Core
 import Config
 import Control.Concurrent.Async.Lifted
 import Control.Monad
+import Data.Function
 import Data.Text as T
 import Discord
 import qualified Discord.Types as DT
@@ -15,8 +16,8 @@ import TextShow
 log' :: Logger
 log' = mkLog "Discord"
 
-instance ProviderEndpoint DiscordConfig where
-  spawnProviderEndpoint DiscordConfig {..} = withNewEndpoint $ \endpoint -> void . async $ log' Error =<< runDiscord def
+instance ProviderEndpoint Discord where
+  spawnProviderEndpoint (Discord ProviderConfig {..}) = withNewEndpoint DiscordPT $ \endpoint -> void . async $ log' Error =<< runDiscord def
     { discordToken   = token
     , discordOnStart = spawnSender endpoint
     , discordOnEvent = eventHandler endpoint
@@ -24,7 +25,7 @@ instance ProviderEndpoint DiscordConfig where
     where
       eventHandler :: Endpoint -> DT.Event -> DiscordHandler ()
       eventHandler endpoint (DT.MessageCreate m) = do
-        log' Info "Handling incoming message"
+        log' Info $ "Handling incoming message from: " <> (m & DT.messageAuthor & DT.userName)
         Right channelName <- fmap DT.channelName <$> getChannel cid
         let channel = Channel channelId channelName
         when (content /= "") $ onMessageReceived endpoint Message { .. } -- ignore images for now
