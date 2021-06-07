@@ -44,7 +44,9 @@ extra-deps:
 - emoji-0.1.0.2
 - prometheus-metrics-ghc-1.0.1.1
 - servant-multipart-0.12
-- telegram-bot-simple-0.3.5
+# - telegram-bot-simple-0.3.5
+- github: matobet/telegram-bot-simple
+  commit: c9abf09c8f6b50f6a02819a1d00d97a0ced4e9b8
 - wai-middleware-prometheus-1.0.0
 
 # Override default flag values for local packages and extra-deps

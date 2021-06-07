@@ -70,7 +70,7 @@ runMirrorMap botName mirrors endpoints = do
         let senderName = message ^. #user % #name
         let isAdmin = senderName `elem` sourceConfig ^. #admins
         let isBot = senderName == botName
-        let mCommand = parseCommand $ message ^. #content
+        let mCommand = parseCommand =<< message ^. #content
 
         case (isAdmin, mCommand) of
           (True, Just Quit) -> do

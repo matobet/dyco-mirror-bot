@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 18f4b8a777631e68a3b0d5162db45bb19e62fbb882b158924a576354b7ed6ece
+-- hash: cdef240392e8ce03156bb456537b224cc67cd6ee667dafff5498149f693209f3
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -62,7 +62,9 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , data-default
     , discord-haskell
+    , http-conduit
     , lifted-async
     , mtl
     , optics
@@ -117,8 +119,10 @@ executable dyco-mirror-bot-exe
       aeson
     , base >=4.7 && <5
     , bytestring
+    , data-default
     , discord-haskell
     , dyco-mirror-bot
+    , http-conduit
     , lifted-async
     , mtl
     , optics
@@ -174,8 +178,10 @@ test-suite dyco-mirror-bot-test
       aeson
     , base >=4.7 && <5
     , bytestring
+    , data-default
     , discord-haskell
     , dyco-mirror-bot
+    , http-conduit
     , lifted-async
     , mtl
     , optics

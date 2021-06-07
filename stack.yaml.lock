@@ -33,12 +33,16 @@ packages:
   original:
     hackage: servant-multipart-0.12
 - completed:
-    hackage: telegram-bot-simple-0.3.5@sha256:c325cd48830a38115418ca5e275ff6a713dc63689239a58f1b13bb44dc1d3a76,3601
+    size: 29199
+    url: https://github.com/matobet/telegram-bot-simple/archive/c9abf09c8f6b50f6a02819a1d00d97a0ced4e9b8.tar.gz
+    name: telegram-bot-simple
+    version: 0.3.6
+    sha256: 215ada7ebf8df8b431333bc4ae713ff113b6ab733be0c04cd91661afab8eb711
     pantry-tree:
-      size: 1835
-      sha256: 548c452cdb0d131cfba0569204fa85753362dc3baaa3e2e96842f3c3a8871c99
+      size: 2157
+      sha256: 04e74c34239321bfef8064a53e637de83bc29625d5a0d27fd916105f419d0607
   original:
-    hackage: telegram-bot-simple-0.3.5
+    url: https://github.com/matobet/telegram-bot-simple/archive/c9abf09c8f6b50f6a02819a1d00d97a0ced4e9b8.tar.gz
 - completed:
     hackage: wai-middleware-prometheus-1.0.0@sha256:1625792914fb2139f005685be8ce519111451cfb854816e430fbf54af46238b4,1314
     pantry-tree:
