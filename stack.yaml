@@ -17,7 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: lts-17.11
+resolver: lts-18.5
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -43,10 +43,11 @@ extra-deps:
 - discord-haskell-1.8.6
 - emoji-0.1.0.2
 - prometheus-metrics-ghc-1.0.1.1
-- servant-multipart-0.12
+- servant-multipart-0.12.1
+- servant-multipart-client-0.12.1
 # - telegram-bot-simple-0.3.5
 - github: matobet/telegram-bot-simple
-  commit: c9abf09c8f6b50f6a02819a1d00d97a0ced4e9b8
+  commit: aa5cdac6708a1c10a027987afae14f54d921ef8a
 - wai-middleware-prometheus-1.0.0
 
 # Override default flag values for local packages and extra-deps

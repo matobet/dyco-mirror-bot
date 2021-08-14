@@ -26,23 +26,30 @@ packages:
   original:
     hackage: prometheus-metrics-ghc-1.0.1.1
 - completed:
-    hackage: servant-multipart-0.12@sha256:aa81dd0478270ade4a21b75611d5bc9cce8107df2e89c37b9964a3421629825d,2761
+    hackage: servant-multipart-0.12.1@sha256:4b6a8c3f73d645e212f2a7a476f30a2ab7ed191945a3ff62154ab99d76dea7f0,1951
     pantry-tree:
-      size: 386
-      sha256: 51c4e9e8be3ee80689bb6df46aee484a4f434dbeb33f4379ed8d1741fe4631cd
+      size: 332
+      sha256: 80f6033a74da5d7c6aded81c428d740a0bf6bfd49e13ce8cde68158abd5ff49f
   original:
-    hackage: servant-multipart-0.12
+    hackage: servant-multipart-0.12.1
 - completed:
-    size: 29199
-    url: https://github.com/matobet/telegram-bot-simple/archive/c9abf09c8f6b50f6a02819a1d00d97a0ced4e9b8.tar.gz
-    name: telegram-bot-simple
-    version: 0.3.6
-    sha256: 215ada7ebf8df8b431333bc4ae713ff113b6ab733be0c04cd91661afab8eb711
+    hackage: servant-multipart-client-0.12.1@sha256:d043063e2f33eab86840f87c4bdb16eb3fe4a5847a0b118e4f4265cf3ba4c9b3,1892
     pantry-tree:
-      size: 2157
-      sha256: 04e74c34239321bfef8064a53e637de83bc29625d5a0d27fd916105f419d0607
+      size: 400
+      sha256: cb02eea7894a94e5dedf5cb74fd5fc6b989711ebb46a0e14d77f74f3b89dcbe0
   original:
-    url: https://github.com/matobet/telegram-bot-simple/archive/c9abf09c8f6b50f6a02819a1d00d97a0ced4e9b8.tar.gz
+    hackage: servant-multipart-client-0.12.1
+- completed:
+    size: 31560
+    url: https://github.com/matobet/telegram-bot-simple/archive/aa5cdac6708a1c10a027987afae14f54d921ef8a.tar.gz
+    name: telegram-bot-simple
+    version: 0.3.7
+    sha256: 72413015aff5d5bc41be6032066759e8b43ae67c5a5c8e946bd653427e24283f
+    pantry-tree:
+      size: 2347
+      sha256: 0835f77f7ab9459b9937c4255e11bf2a7ed51e5603bc157cedfd3dfc6c9f58b5
+  original:
+    url: https://github.com/matobet/telegram-bot-simple/archive/aa5cdac6708a1c10a027987afae14f54d921ef8a.tar.gz
 - completed:
     hackage: wai-middleware-prometheus-1.0.0@sha256:1625792914fb2139f005685be8ce519111451cfb854816e430fbf54af46238b4,1314
     pantry-tree:
@@ -52,7 +59,7 @@ packages:
     hackage: wai-middleware-prometheus-1.0.0
 snapshots:
 - completed:
-    size: 567672
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/11.yaml
-    sha256: 03181cdbeb671eb605bbcf6f285bea4d094b6ac7433a0e14a9f1dd54ad995938
-  original: lts-17.11
+    size: 585817
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/5.yaml
+    sha256: 22d24d0dacad9c1450b9a174c28d203f9bb482a2a8da9710a2f2a9f4afee2887
+  original: lts-18.5
