@@ -53,7 +53,8 @@ instance ProviderEndpoint Discord where
                 Just image -> do
                   let imageToUpload (ImageUrl   url  ) = DT.CreateEmbedImageUrl url
                       imageToUpload (ImageBytes bytes) = DT.CreateEmbedImageUpload bytes
-                  DR.CreateMessageEmbed channelId body $ def { DT.createEmbedImage = Just $ imageToUpload image }
+                  DR.CreateMessageEmbed channelId body
+                    $ def { DT.createEmbedImage = Just $ imageToUpload image }
                 Nothing -> DR.CreateMessage channelId body
           res <- restCall createMessage
           case res of

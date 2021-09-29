@@ -40,16 +40,16 @@ packages:
   original:
     hackage: servant-multipart-client-0.12.1
 - completed:
-    size: 31560
-    url: https://github.com/matobet/telegram-bot-simple/archive/aa5cdac6708a1c10a027987afae14f54d921ef8a.tar.gz
+    size: 31797
+    url: https://github.com/matobet/telegram-bot-simple/archive/43d702b6cb933df12c312e99318e4e18416d8399.tar.gz
     name: telegram-bot-simple
     version: 0.3.7
-    sha256: 72413015aff5d5bc41be6032066759e8b43ae67c5a5c8e946bd653427e24283f
+    sha256: b264094249c9f6c84ea236bcaa49b02c7608d96989fb4e9e1a93549afadb3005
     pantry-tree:
       size: 2347
-      sha256: 0835f77f7ab9459b9937c4255e11bf2a7ed51e5603bc157cedfd3dfc6c9f58b5
+      sha256: 48cadf267688408b122b85fdc7d21b1713af0b0344c99d71ac196c213a066da2
   original:
-    url: https://github.com/matobet/telegram-bot-simple/archive/aa5cdac6708a1c10a027987afae14f54d921ef8a.tar.gz
+    url: https://github.com/matobet/telegram-bot-simple/archive/43d702b6cb933df12c312e99318e4e18416d8399.tar.gz
 - completed:
     hackage: wai-middleware-prometheus-1.0.0@sha256:1625792914fb2139f005685be8ce519111451cfb854816e430fbf54af46238b4,1314
     pantry-tree:

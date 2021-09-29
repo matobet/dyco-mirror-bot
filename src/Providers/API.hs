@@ -15,15 +15,16 @@ import Control.Monad.IO.Class (liftIO, MonadIO)
 
 data Endpoint = Endpoint
   { endpointProvider :: ProviderType
-  , sender :: TQueue (Message, ChannelId)
-  , receiver :: TQueue Message
+  , sender           :: TQueue (Message, ChannelId)
+  , receiver         :: TQueue Message
   }
 
 newEndpoint :: MonadIO m => ProviderType -> m Endpoint
 newEndpoint providerType = liftIO . atomically $ Endpoint providerType <$> newTQueue <*> newTQueue
 
 publishMessage :: MonadIO m => Endpoint -> Message -> ChannelId -> m ()
-publishMessage endpoint message targetChannelId = liftIO . atomically $ writeTQueue (sender endpoint) (message, targetChannelId)
+publishMessage endpoint message targetChannelId =
+  liftIO . atomically $ writeTQueue (sender endpoint) (message, targetChannelId)
 
 onMessageReceived :: MonadIO m => Endpoint -> Message -> m ()
 onMessageReceived endpoint = liftIO . atomically . writeTQueue (receiver endpoint)

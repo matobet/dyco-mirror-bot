@@ -19,16 +19,17 @@ data Image = ImageUrl Text | ImageBytes BS.ByteString
   deriving TextShow via FromGeneric Image
 
 data Message = Message
-  { user :: UserRef
+  { user    :: UserRef
   , channel :: Channel
   , content :: Maybe Text
-  , image :: Maybe Image
+  , image   :: Maybe Image
   }
   deriving Generic
   deriving TextShow via FromGeneric Message
 
 formatMessage :: Message -> Text
-formatMessage Message {..} = mconcat ["[#", channel ^. #name, "]: ", user ^. #name, ": ", fromMaybe "" content]
+formatMessage Message {..} =
+  mconcat ["[#", channel ^. #name, "]: ", user ^. #name, ": ", fromMaybe "" content]
 
 newtype ChannelId = ChannelId { unChannelId :: Text }
   deriving newtype TextShow
@@ -36,7 +37,10 @@ newtype ChannelId = ChannelId { unChannelId :: Text }
 -- newtype ChannelName = ChannelName { unChannelName :: Text }
 --   deriving TextShow
 
-data Channel = Channel { id :: ChannelId, name :: Text }
+data Channel = Channel
+  { id   :: ChannelId
+  , name :: Text
+  }
   deriving Generic
   deriving TextShow via FromGeneric Channel
 

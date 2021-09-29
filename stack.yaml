@@ -47,7 +47,7 @@ extra-deps:
 - servant-multipart-client-0.12.1
 # - telegram-bot-simple-0.3.5
 - github: matobet/telegram-bot-simple
-  commit: aa5cdac6708a1c10a027987afae14f54d921ef8a
+  commit: 43d702b6cb933df12c312e99318e4e18416d8399
 - wai-middleware-prometheus-1.0.0
 
 # Override default flag values for local packages and extra-deps

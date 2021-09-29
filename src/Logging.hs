@@ -16,15 +16,15 @@ setupLogging = do
 
 data LogType = Info | Error
 
-type Logger = forall m. MonadIO m => LogType -> Text -> m ()
+type Logger = forall m . MonadIO m => LogType -> Text -> m ()
 
 mkLog :: Text -> Logger
 mkLog name = log
- where
-  log Info = liftIO . TIO.putStrLn <=< prefixWithTime . (wrappedName <>) . ("INFO: " <>)
-  log Error = liftIO . TIO.hPutStrLn stderr <=< prefixWithTime . (wrappedName <>) . ("ERROR: " <>)
+  where
+    log Info  = liftIO . TIO.putStrLn <=< prefixWithTime . (wrappedName <>) . ("INFO: " <>)
+    log Error = liftIO . TIO.hPutStrLn stderr <=< prefixWithTime . (wrappedName <>) . ("ERROR: " <>)
 
-  wrappedName = mconcat ["[", name, "] "]
-  prefixWithTime str = do
-    time <- liftIO $ utcToLocalZonedTime =<< getCurrentTime
-    return $ pack (show time) <> " " <> str
+    wrappedName = mconcat ["[", name, "] "]
+    prefixWithTime str = do
+      time <- liftIO $ utcToLocalZonedTime =<< getCurrentTime
+      return $ pack (show time) <> " " <> str

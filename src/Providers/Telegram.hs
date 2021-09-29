@@ -40,7 +40,10 @@ bot endpoint token = do
           let channel   = messageChat message
           let channelId = chatId channel
           channelName <- chatTitle channel
-          let content = TBA.messageText message <|> TBA.messageCaption message -- in case of images, the messageCaption is set instead of messageText
+          let content =
+                TBA.messageText message
+                  <|> TBA.messageCaption message -- in case of images, the messageCaption is set instead of messageText
+                  <|> (TBA.messageSticker message >>= TBA.stickerEmoji) -- in case of sticker, we want to extract the underlying emoji
           let photoSizes = TBA.messagePhoto message
           return
             ( UserRef userName
