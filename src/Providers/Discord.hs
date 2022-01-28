@@ -34,9 +34,9 @@ instance ProviderEndpoint Discord where
         onMessageReceived endpoint Message { .. }
         where
           user       = UserRef . DT.userName . DT.messageAuthor $ m
-          cid        = DT.messageChannel m
+          cid        = DT.messageChannelId m
           channelId  = ChannelId $ T.pack . show $ cid
-          content    = Just $ DT.messageText m
+          content    = Just $ DT.messageContent m
           getChannel = restCall . DR.GetChannel
           image      = listToMaybe $ ImageUrl . DT.attachmentUrl <$> DT.messageAttachments m
       eventHandler _ _ = return ()

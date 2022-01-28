@@ -40,14 +40,12 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 extra-deps:
-- discord-haskell-1.8.6
+- discord-haskell-1.11.0
 - emoji-0.1.0.2
 - prometheus-metrics-ghc-1.0.1.1
 - servant-multipart-0.12.1
 - servant-multipart-client-0.12.1
-# - telegram-bot-simple-0.3.5
-- github: matobet/telegram-bot-simple
-  commit: 7fed0d427e4ff47cb7b79c75b82acd9c16bff4c5
+- telegram-bot-simple-0.3.8
 - wai-middleware-prometheus-1.0.0
 
 # Override default flag values for local packages and extra-deps

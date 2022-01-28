@@ -5,12 +5,12 @@
 
 packages:
 - completed:
-    hackage: discord-haskell-1.8.6@sha256:59aa6be20aa7ee107251beb2b98a185c9b656af8afc8da8ba6737808b24f2b45,3562
+    hackage: discord-haskell-1.11.0@sha256:3f58689582a69c8797dccf3f0ce9860b2ab5c5010a6603f87cb85c68a223339a,4090
     pantry-tree:
-      size: 2107
-      sha256: 4cc7b8f7c38a8618e0fdeba223bb1cd7bd9caca0df75016b2d866ac2a7619d82
+      size: 2605
+      sha256: e0cb098325bbf5068f00b13bc9662e27aa55a1d15da3f2f7a596849b7513a161
   original:
-    hackage: discord-haskell-1.8.6
+    hackage: discord-haskell-1.11.0
 - completed:
     hackage: emoji-0.1.0.2@sha256:d995572a5c7dcd28f98eb15c6e387a7b3bda1ac2477ab0d9dba8580d5d7b161f,1273
     pantry-tree:
@@ -40,16 +40,12 @@ packages:
   original:
     hackage: servant-multipart-client-0.12.1
 - completed:
-    size: 31797
-    url: https://github.com/matobet/telegram-bot-simple/archive/7fed0d427e4ff47cb7b79c75b82acd9c16bff4c5.tar.gz
-    name: telegram-bot-simple
-    version: 0.3.7
-    sha256: 335bfedeb8559cf297d1fa41b1c541f89c02b41ed7f5365698f73fb380398157
+    hackage: telegram-bot-simple-0.3.8@sha256:513fb1ce31c2af4221af6608ac7bed09a753a2e98bfd104f3f6ab082bd4eb9ab,3745
     pantry-tree:
-      size: 2347
-      sha256: dccda8448f3904fa3a0a71ef2de0e1dc97ad37aa09afe211ea9c74c6b26ce555
+      size: 2026
+      sha256: 5fb1c7e2f2f94e19c1aaa413cca957488d5993eaa063906e61fa49bd58a1c6dc
   original:
-    url: https://github.com/matobet/telegram-bot-simple/archive/7fed0d427e4ff47cb7b79c75b82acd9c16bff4c5.tar.gz
+    hackage: telegram-bot-simple-0.3.8
 - completed:
     hackage: wai-middleware-prometheus-1.0.0@sha256:1625792914fb2139f005685be8ce519111451cfb854816e430fbf54af46238b4,1314
     pantry-tree:
