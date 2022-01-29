@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cdef240392e8ce03156bb456537b224cc67cd6ee667dafff5498149f693209f3
+-- hash: 8e2764493375f3e79d0a6c27c385a88f024a46ecb67ebc4e7686d0d8450bbc0d
 
 name:           dyco-mirror-bot
 version:        0.1.0.0
@@ -62,10 +62,12 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , data-default
     , discord-haskell
     , http-conduit
     , lifted-async
+    , monad-control
     , mtl
     , optics
     , optics-th
@@ -78,6 +80,7 @@ library
     , text
     , text-show
     , time
+    , transformers
     , transformers-base
     , unordered-containers
     , wai
@@ -119,11 +122,13 @@ executable dyco-mirror-bot-exe
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , data-default
     , discord-haskell
     , dyco-mirror-bot
     , http-conduit
     , lifted-async
+    , monad-control
     , mtl
     , optics
     , optics-th
@@ -136,6 +141,7 @@ executable dyco-mirror-bot-exe
     , text
     , text-show
     , time
+    , transformers
     , transformers-base
     , unordered-containers
     , wai
@@ -178,11 +184,13 @@ test-suite dyco-mirror-bot-test
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , data-default
     , discord-haskell
     , dyco-mirror-bot
     , http-conduit
     , lifted-async
+    , monad-control
     , mtl
     , optics
     , optics-th
@@ -195,6 +203,7 @@ test-suite dyco-mirror-bot-test
     , text
     , text-show
     , time
+    , transformers
     , transformers-base
     , unordered-containers
     , wai

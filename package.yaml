@@ -23,10 +23,12 @@ dependencies:
 - aeson
 - base >= 4.7 && < 5
 - bytestring
+- containers
 - data-default
 - discord-haskell
 - http-conduit
 - lifted-async
+- monad-control
 - mtl
 - optics
 - optics-th
@@ -40,6 +42,7 @@ dependencies:
 - text-show
 - time
 - transformers-base
+- transformers
 - unordered-containers
 - wai
 - wai-middleware-prometheus

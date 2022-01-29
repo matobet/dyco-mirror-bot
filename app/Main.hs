@@ -1,8 +1,10 @@
 module Main where
 
 import Config
+import Control.Applicative
 import Control.Concurrent.Async.Lifted
 import Control.Monad
+import Control.Monad.Trans.Maybe
 import Core
 import Data.Maybe
 import Data.Text (Text)
@@ -24,11 +26,20 @@ import Text.Read (readMaybe)
 import Data.Foldable (find)
 import System.Exit
 import Control.Concurrent (threadDelay)
+import Data.Map (Map)
+import qualified Data.Map as Map
+import Control.Concurrent.MVar
 
 data Command
   = Quit
   | Rollback
   deriving Show
+
+type OriginalMessages = Map MessageID OriginalMessageInfo
+type MirroredMessages = Map MessageID MirroredMessageInfo
+
+newtype OriginalMessageInfo = OriginalMessageInfo { mirroredTo :: [(ChannelRef, MessageID)] }
+data MirroredMessageInfo = MirroredMessageInfo { originalChannel :: ChannelRef, originalMessageId :: MessageID }
 
 main :: IO ()
 main = withUtf8 $ do
@@ -48,7 +59,10 @@ main = withUtf8 $ do
   telegram <- spawnProviderEndpoint telegramConfig
   discord  <- spawnProviderEndpoint discordConfig
 
-  runMirrorMap botName mirrors
+  originalMessages <- newMVar Map.empty
+  mirroredMessages <- newMVar Map.empty
+
+  runMirrorMap botName mirrors originalMessages mirroredMessages
     [ (telegram, unTelegram telegramConfig)
     , (discord, unDiscord discordConfig)
     ]
@@ -56,8 +70,8 @@ main = withUtf8 $ do
 log' :: Logger
 log' = mkLog "Mirror"
 
-runMirrorMap :: Text -> [MirrorConfig] -> [(Endpoint, ProviderConfig)] -> IO ()
-runMirrorMap botName mirrors endpoints = do
+runMirrorMap :: Text -> [MirrorConfig] -> MVar OriginalMessages -> MVar MirroredMessages -> [(Endpoint, ProviderConfig)] -> IO ()
+runMirrorMap botName mirrors originalMessages mirroredMessages endpoints = do
   forConcurrently_ mirrorsBySource $ \(sourceProvider, sourceMirrors) -> do
     case lookupEndpoint sourceProvider endpoints of
       Nothing ->
@@ -82,21 +96,55 @@ runMirrorMap botName mirrors endpoints = do
             later . exitWith $ ExitFailure 42 -- magic error code to signal rollback
 
           _ -> unless isBot $ do -- skip messages from the bot itself
-            let matchingMirrors = filter (\MirrorConfig{source = ChannelRef{channelName}} -> channelName == message ^. #channel % #name) sourceMirrors
-            log' Info $ "Matched mirrors: " <> showt matchingMirrors
 
-            forM_ matchingMirrors $ \MirrorConfig{target = ChannelRef{provider = targetProvider, channelName = targetChannelName}} -> do
-              case lookupEndpoint targetProvider endpoints of
-                Nothing ->
-                  log' Error $ mconcat ["Target provider ", showt targetProvider, " not configured"]
+            mirroredTo <- concat <$> runMaybeT
+              (   handleReplyToOriginal message
+              <|> handleReplyToMirror message 
+              <|> handlePlainMirror message sourceMirrors
+              )
 
-                Just (targetEndpoint, targetConfig) ->
-                  case channelIdByName targetChannelName (targetConfig ^. #channels) of
-                    Nothing -> log' Error $ mconcat ["Channel: ", showt targetChannelName, " not found in provider", showt targetProvider]
-                    Just targetChannelId -> do
-                      log' Info $ mconcat ["Delegaing to provider ", showt targetProvider, " for dispatch"]
-                      publishMessage targetEndpoint message (ChannelId targetChannelId)
+            -- cache original -> [mirrors]
+            modifyMVar_ originalMessages $ pure . Map.insert (message ^. #id) (OriginalMessageInfo mirroredTo)
+
+            -- cache [mirrors] -> original
+            let sourceChannelRef = ChannelRef sourceProvider $ message ^. #channel % #name
+            let mirroredMessageInfo = MirroredMessageInfo sourceChannelRef $ message ^. #id
+            modifyMVar_ mirroredMessages $ pure . Map.union (Map.fromList $ (snd <$> mirroredTo) `zip` repeat mirroredMessageInfo)
+
   where
+    handleReplyToOriginal message = do
+      originalMessageId <- MaybeT $ return $ message ^. #replyTo
+      OriginalMessageInfo{mirroredTo} <- MaybeT $ Map.lookup originalMessageId <$> readMVar originalMessages
+      forM mirroredTo $ \(target, messageId) -> mirrorToChannel target message { replyTo = Just messageId }
+
+    handleReplyToMirror message = do
+      mirroredMessageId <- MaybeT $ return $ message ^. #replyTo
+      MirroredMessageInfo{originalChannel, originalMessageId = originalOfOriginalMessageId} <- MaybeT $ Map.lookup mirroredMessageId <$> readMVar mirroredMessages
+      pure <$> mirrorToChannel originalChannel message { replyTo = Just originalOfOriginalMessageId }
+
+    handlePlainMirror message sourceMirrors =
+      sourceMirrors
+      & filter (\MirrorConfig{source = ChannelRef{channelName}} -> channelName == message ^. #channel % #name)
+      & mapM (\MirrorConfig{target} -> mirrorToChannel target message)
+
+    mirrorToChannel target@ChannelRef{provider = targetProvider, channelName = targetChannelName} message = do
+      case lookupEndpoint targetProvider endpoints of
+        Nothing -> do
+          log' Error $ mconcat ["Target provider ", showt targetProvider, " not configured"]
+          mzero
+
+        Just (targetEndpoint, targetConfig) ->
+          case channelIdByName targetChannelName (targetConfig ^. #channels) of
+            Nothing -> do
+              log' Error $ mconcat ["Channel: ", showt targetChannelName, " not found in provider", showt targetProvider]
+              mzero
+
+            Just targetChannelId -> do
+              log' Info $ mconcat ["Delegaing to provider ", showt targetProvider, " for dispatch"]
+              mirroredId <- publishMessage targetEndpoint message (ChannelId targetChannelId)
+              log' Info $ mconcat ["Dispatched with ", showt mirroredId]
+              return (target, mirroredId)
+
     lookupEndpoint providerType = find $ (== providerType) . endpointProvider . fst
 
     parseCommand :: Text -> Maybe Command

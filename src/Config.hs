@@ -57,11 +57,11 @@ data MirrorConfig = MirrorConfig {source :: ChannelRef, target :: ChannelRef}
   deriving TextShow via FromGeneric MirrorConfig
 
 data ProviderType = TelegramPT | DiscordPT
-  deriving (Generic, FromJSON, Ord, Eq)
+  deriving (Generic, FromJSON, Ord, Eq, Show)
   deriving TextShow via FromGeneric ProviderType
 
 data ChannelRef = ChannelRef {provider :: ProviderType, channelName :: Text}
-  deriving (Generic, Eq)
+  deriving (Generic, Eq, Show)
   deriving TextShow via FromGeneric ChannelRef
 
 instance FromJSON ChannelRef where

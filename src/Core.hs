@@ -10,6 +10,7 @@ import TextShow.Generic
 import GHC.Generics
 
 import qualified Data.ByteString as BS
+import Config (ProviderType)
 
 newtype UserRef = UserRef { name :: Text }
   deriving newtype TextShow
@@ -18,11 +19,20 @@ data Image = ImageUrl Text | ImageBytes BS.ByteString
   deriving Generic
   deriving TextShow via FromGeneric Image
 
+data MessageID = MessageID
+  { provider :: ProviderType
+  , id       :: Text
+  }
+  deriving (Eq, Ord, Show, Generic)
+  deriving TextShow via FromGeneric MessageID
+
 data Message = Message
-  { user    :: UserRef
+  { id      :: MessageID
+  , user    :: UserRef
   , channel :: Channel
   , content :: Maybe Text
   , image   :: Maybe Image
+  , replyTo :: Maybe MessageID
   }
   deriving Generic
   deriving TextShow via FromGeneric Message
@@ -46,4 +56,5 @@ data Channel = Channel
 
 makeFieldLabelsWith noPrefixFieldLabels ''UserRef
 makeFieldLabelsWith noPrefixFieldLabels ''Message
+makeFieldLabelsWith noPrefixFieldLabels ''MessageID
 makeFieldLabelsWith noPrefixFieldLabels ''Channel
