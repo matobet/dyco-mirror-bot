@@ -141,7 +141,7 @@ runMirrorMap botName mirrors originalMessages mirroredMessages endpoints = do
 
             Just targetChannelId -> do
               log' Info $ mconcat ["Delegaing to provider ", showt targetProvider, " for dispatch"]
-              mirroredId <- publishMessage targetEndpoint message (ChannelId targetChannelId)
+              mirroredId <- MaybeT $ publishMessage targetEndpoint message (ChannelId targetChannelId)
               log' Info $ mconcat ["Dispatched with ", showt mirroredId]
               return (target, mirroredId)
 

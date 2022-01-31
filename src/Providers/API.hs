@@ -18,19 +18,19 @@ data Endpoint = Endpoint
   { endpointProvider :: ProviderType
   , sender           :: TQueue (Message, ChannelId)
   , receiver         :: TQueue Message
-  , publishResult    :: TMVar MessageID
+  , publishResult    :: TMVar (Maybe MessageID)
   }
 
 newEndpoint :: MonadIO m => ProviderType -> m Endpoint
 newEndpoint providerType =
   liftIO . atomically $ Endpoint providerType <$> newTQueue <*> newTQueue <*> newEmptyTMVar
 
-publishMessage :: MonadIO m => Endpoint -> Message -> ChannelId -> m MessageID
+publishMessage :: MonadIO m => Endpoint -> Message -> ChannelId -> m (Maybe MessageID)
 publishMessage endpoint message targetChannelId = do
   liftIO . atomically $ writeTQueue (sender endpoint) (message, targetChannelId)
   liftIO . atomically $ takeTMVar (publishResult endpoint)
 
-onMessagePublished :: MonadIO m => Endpoint -> MessageID -> m ()
+onMessagePublished :: MonadIO m => Endpoint -> Maybe MessageID -> m ()
 onMessagePublished endpoint = liftIO . atomically . putTMVar (publishResult endpoint)
 
 onMessageReceived :: MonadIO m => Endpoint -> Message -> m ()

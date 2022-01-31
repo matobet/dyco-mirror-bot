@@ -1,6 +1,5 @@
 
 {-# OPTIONS_GHC -Wno-orphans #-}
-{-# LANGUAGE IncoherentInstances #-}
 {-# LANGUAGE TypeApplications #-}
 module Providers.Telegram where
 
@@ -105,14 +104,16 @@ bot endpoint token = do
         sendTo (ChatId . read . unpack . unChannelId $ targetChannelId)
                (TBA.MessageId . read . unpack <$> (message ^? #replyTo % _Just % #id))
                body
-        $  message
-        ^. #image
-      onMessagePublished endpoint $ messageIdFromTelegramMessage publishedMsg
+               (message ^. #image)
+          `catchError` \err -> do
+                         log' Error $ mconcat ["Error publishing to Telegram: ", pack . show $ err]
+                         return Nothing
+      onMessagePublished endpoint $ messageIdFromTelegramMessage <$> publishedMsg
 
     messageIdFromTelegramMessage = MessageID provider . showt @Int32 . coerce . TBA.messageMessageId
     provider                     = endpointProvider endpoint
 
-sendTo :: ChatId -> Maybe TBA.MessageId -> Text -> Maybe Image -> ClientM TBA.Message
+sendTo :: ChatId -> Maybe TBA.MessageId -> Text -> Maybe Image -> ClientM (Maybe TBA.Message)
 sendTo chatId replyToId msgText image = do
   res <- case image of
     Just (ImageUrl url) -> sendPhoto SendPhotoRequest { sendPhotoChatId              = SomeChatId chatId
@@ -132,8 +133,11 @@ sendTo chatId replyToId msgText image = do
                                         , sendMessageReplyToMessageId      = replyToId
                                         , sendMessageReplyMarkup           = Nothing
                                         }
-  unless (responseOk res) . log' Error $ "Telegram publish failed with: " <> pack (show res) -- TODO: error handling to prevent DeadLock
-  return . TBA.responseResult $ res
+  if not $ responseOk res
+    then do
+      log' Error $ "Telegram publish failed with: " <> pack (show res)
+      return Nothing
+    else return . Just . TBA.responseResult $ res
 
 instance ProviderEndpoint Telegram where
   spawnProviderEndpoint (Telegram ProviderConfig {..}) =

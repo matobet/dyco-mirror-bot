@@ -6,7 +6,6 @@ import Config
 import Control.Concurrent.Async.Lifted
 import Control.Monad
 import Data.Default
-import Data.Function ((&))
 import qualified Data.Text as T
 import Discord
 import qualified Discord.Types as DT
@@ -73,5 +72,7 @@ instance ProviderEndpoint Discord where
                   <&> (\referenceId -> def { DT.referenceMessageId = Just referenceId })
                 }
             case res of
-              Left  err -> log' Error $ "Discord publish failed with: " <> T.pack (show err) -- TODO: error handling to prevent DeadLock
-              Right msg -> onMessagePublished endpoint $ messageIdFromDiscordMessage msg
+              Left err -> do
+                log' Error $ "Discord publish failed with: " <> T.pack (show err)
+                onMessagePublished endpoint Nothing
+              Right msg -> onMessagePublished endpoint . Just $ messageIdFromDiscordMessage msg
