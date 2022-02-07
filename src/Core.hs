@@ -17,7 +17,10 @@ newtype UserRef = UserRef { name :: Text }
 
 data Image = ImageUrl Text | ImageBytes BS.ByteString
   deriving Generic
-  deriving TextShow via FromGeneric Image
+
+instance TextShow Image where
+  showb (ImageUrl   url  ) = "ImageUrl: " <> showb url
+  showb (ImageBytes bytes) = "ImageBytes: <" <> showb (BS.length bytes) <> " bytes>"
 
 data MessageID = MessageID
   { provider :: ProviderType
