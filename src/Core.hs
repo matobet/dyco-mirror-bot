@@ -14,6 +14,7 @@ import Config (ProviderType)
 
 newtype UserRef = UserRef { name :: Text }
   deriving newtype TextShow
+  deriving Generic
 
 data Image = ImageUrl Text | ImageBytes BS.ByteString
   deriving Generic
@@ -56,8 +57,3 @@ data Channel = Channel
   }
   deriving Generic
   deriving TextShow via FromGeneric Channel
-
-makeFieldLabelsWith noPrefixFieldLabels ''UserRef
-makeFieldLabelsWith noPrefixFieldLabels ''Message
-makeFieldLabelsWith noPrefixFieldLabels ''MessageID
-makeFieldLabelsWith noPrefixFieldLabels ''Channel

@@ -64,8 +64,8 @@ instance ProviderEndpoint Discord where
               channelId
               def
                 { DT.messageDetailedContent   = body
-                , DT.messageDetailedEmbed     = (message ^. #image) <&> imageToUpload <&> \image ->
-                                                  def { DT.createEmbedImage = Just image }
+                , DT.messageDetailedEmbeds    = (message ^. #image) <&> imageToUpload <&> \image ->
+                                                  [def { DT.createEmbedImage = Just image }]
                 , DT.messageDetailedReference =
                   (message ^? #replyTo % _Just % #id)
                   <&> (read . T.unpack)

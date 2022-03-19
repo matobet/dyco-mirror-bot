@@ -31,7 +31,6 @@ dependencies:
 - monad-control
 - mtl
 - optics
-- optics-th
 - pointless-fun
 - prometheus-client
 - prometheus-metrics-ghc

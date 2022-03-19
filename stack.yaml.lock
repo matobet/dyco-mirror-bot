@@ -5,50 +5,22 @@
 
 packages:
 - completed:
+    hackage: discord-haskell-1.12.4@sha256:80ca52ccb6ceeb0dee3114037c16065ad2e1bf8223b80869566f60afeac5f6c3,4527
+    pantry-tree:
+      size: 2681
+      sha256: 6dfdc38afa993ea8d5a0dea563aff28c505f6d927b843ee77b77edb4a4e57c4c
+  original:
+    hackage: discord-haskell-1.12.4
+- completed:
     hackage: emoji-0.1.0.2@sha256:d995572a5c7dcd28f98eb15c6e387a7b3bda1ac2477ab0d9dba8580d5d7b161f,1273
     pantry-tree:
       size: 437
       sha256: dd9ea90a631342e5db0fc21331ade4d563a685e9125d5a3989eefa8e1b96c6c6
   original:
     hackage: emoji-0.1.0.2
-- completed:
-    hackage: prometheus-metrics-ghc-1.0.1.1@sha256:d378a7186a967140fe0e09d325fe5e3bfd7b77a1123934b40f81fdfed2eacbdc,1233
-    pantry-tree:
-      size: 293
-      sha256: 0732085a4148b269bbc15eeb7ab422e65ac287878a42a7388a7b6e140ec740e5
-  original:
-    hackage: prometheus-metrics-ghc-1.0.1.1
-- completed:
-    hackage: servant-multipart-0.12.1@sha256:4b6a8c3f73d645e212f2a7a476f30a2ab7ed191945a3ff62154ab99d76dea7f0,1951
-    pantry-tree:
-      size: 332
-      sha256: 80f6033a74da5d7c6aded81c428d740a0bf6bfd49e13ce8cde68158abd5ff49f
-  original:
-    hackage: servant-multipart-0.12.1
-- completed:
-    hackage: servant-multipart-client-0.12.1@sha256:d043063e2f33eab86840f87c4bdb16eb3fe4a5847a0b118e4f4265cf3ba4c9b3,1892
-    pantry-tree:
-      size: 400
-      sha256: cb02eea7894a94e5dedf5cb74fd5fc6b989711ebb46a0e14d77f74f3b89dcbe0
-  original:
-    hackage: servant-multipart-client-0.12.1
-- completed:
-    hackage: telegram-bot-simple-0.3.8@sha256:513fb1ce31c2af4221af6608ac7bed09a753a2e98bfd104f3f6ab082bd4eb9ab,3745
-    pantry-tree:
-      size: 2026
-      sha256: 5fb1c7e2f2f94e19c1aaa413cca957488d5993eaa063906e61fa49bd58a1c6dc
-  original:
-    hackage: telegram-bot-simple-0.3.8
-- completed:
-    hackage: wai-middleware-prometheus-1.0.0@sha256:1625792914fb2139f005685be8ce519111451cfb854816e430fbf54af46238b4,1314
-    pantry-tree:
-      size: 307
-      sha256: 6d64803c639ed4c7204ea6fab0536b97d3ee16cdecb9b4a883cd8e56d3c61402
-  original:
-    hackage: wai-middleware-prometheus-1.0.0
 snapshots:
 - completed:
-    size: 587819
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/23.yaml
-    sha256: 7f69bb29a57495586e7e3ed31ecc59c0d2c959cb23bd52b71ca676f254c9beb1
-  original: lts-18.23
+    size: 616897
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/0.yaml
+    sha256: bbf2be02f17940bac1f87cb462d4fb0c3355de6dcfc53d84f4f9ad3ee2164f65
+  original: lts-19.0

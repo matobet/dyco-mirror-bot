@@ -2,12 +2,12 @@ module Config where
 
 import Control.Monad
 import Data.Aeson
+import qualified Data.Aeson.Key as K
+import qualified Data.Aeson.KeyMap as KM
 import Data.ByteString.Char8 as BS
-import qualified Data.HashMap.Strict as HM
 import Data.Text
 import qualified Data.Yaml as Y
 import GHC.Generics
-import Optics.TH
 import TextShow
 import TextShow.Generic
 
@@ -46,9 +46,9 @@ channelIdByName :: Text -> [ChannelConfig] -> Maybe Text
 channelIdByName name channels = lookup name $ (\ChannelConfig {..} -> (name, id)) <$> channels
 
 instance {-# OVERLAPPING #-} FromJSON [ChannelConfig] where
-  parseJSON (Object v) = mapM parseChannel $ HM.toList v
+  parseJSON (Object v) = mapM parseChannel $ KM.toList v
     where
-      parseChannel (channel, String id) = return $ ChannelConfig channel id
+      parseChannel (channel, String id) = return $ ChannelConfig (K.toText channel) id
       parseChannel _                    = fail "Expected a key-value String pair"
   parseJSON _ = fail "Expected an object"
 
@@ -75,9 +75,3 @@ instance FromJSON ChannelRef where
 
 readConfig :: String -> IO Config
 readConfig = BS.readFile >=> Y.decodeThrow
-
-makeFieldLabelsWith noPrefixFieldLabels ''Config
-makeFieldLabelsWith noPrefixFieldLabels ''ProviderConfig
-makeFieldLabelsWith noPrefixFieldLabels ''ChannelConfig
-makeFieldLabelsWith noPrefixFieldLabels ''MirrorConfig
-makeFieldLabelsWith noPrefixFieldLabels ''ChannelRef

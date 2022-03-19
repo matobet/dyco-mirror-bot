@@ -70,7 +70,6 @@ library
     , monad-control
     , mtl
     , optics
-    , optics-th
     , pointless-fun
     , prometheus-client
     , prometheus-metrics-ghc
@@ -131,7 +130,6 @@ executable dyco-mirror-bot-exe
     , monad-control
     , mtl
     , optics
-    , optics-th
     , pointless-fun
     , prometheus-client
     , prometheus-metrics-ghc
@@ -193,7 +191,6 @@ test-suite dyco-mirror-bot-test
     , monad-control
     , mtl
     , optics
-    , optics-th
     , pointless-fun
     , prometheus-client
     , prometheus-metrics-ghc

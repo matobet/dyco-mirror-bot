@@ -110,28 +110,34 @@ bot endpoint token = do
                          return Nothing
       onMessagePublished endpoint $ messageIdFromTelegramMessage <$> publishedMsg
 
-    messageIdFromTelegramMessage = MessageID provider . showt @Int32 . coerce . TBA.messageMessageId
+    messageIdFromTelegramMessage = MessageID provider . showt @Integer . coerce . TBA.messageMessageId
     provider                     = endpointProvider endpoint
 
 sendTo :: ChatId -> Maybe TBA.MessageId -> Text -> Maybe Image -> ClientM (Maybe TBA.Message)
 sendTo chatId replyToId msgText image = do
   res <- case image of
-    Just (ImageUrl url) -> sendPhoto SendPhotoRequest { sendPhotoChatId              = SomeChatId chatId
-                                                      , sendPhotoPhoto               = PhotoUrl url
-                                                      , sendPhotoThumb               = Nothing
-                                                      , sendPhotoCaption             = Just msgText
-                                                      , sendPhotoParseMode           = Nothing
-                                                      , sendPhotoDisableNotification = Nothing
-                                                      , sendPhotoReplyToMessageId    = replyToId
-                                                      , sendPhotoReplyMarkup         = Nothing
+    Just (ImageUrl url) -> sendPhoto SendPhotoRequest { sendPhotoChatId                   = SomeChatId chatId
+                                                      , sendPhotoPhoto                    = PhotoUrl url
+                                                      , sendPhotoThumb                    = Nothing
+                                                      , sendPhotoCaption                  = Just msgText
+                                                      , sendPhotoParseMode                = Nothing
+                                                      , sendPhotoDisableNotification      = Nothing
+                                                      , sendPhotoReplyToMessageId         = replyToId
+                                                      , sendPhotoReplyMarkup              = Nothing
+                                                      , sendPhotoCaptionEntities          = Nothing
+                                                      , sendPhotoProtectContent           = Nothing
+                                                      , sendPhotoAllowSendingWithoutReply = Nothing
                                                       }
-    _ -> sendMessage SendMessageRequest { sendMessageChatId                = SomeChatId chatId
-                                        , sendMessageText                  = msgText
-                                        , sendMessageParseMode             = Nothing
-                                        , sendMessageDisableWebPagePreview = Nothing
-                                        , sendMessageDisableNotification   = Nothing
-                                        , sendMessageReplyToMessageId      = replyToId
-                                        , sendMessageReplyMarkup           = Nothing
+    _ -> sendMessage SendMessageRequest { sendMessageChatId                   = SomeChatId chatId
+                                        , sendMessageText                     = msgText
+                                        , sendMessageParseMode                = Nothing
+                                        , sendMessageDisableWebPagePreview    = Nothing
+                                        , sendMessageDisableNotification      = Nothing
+                                        , sendMessageReplyToMessageId         = replyToId
+                                        , sendMessageReplyMarkup              = Nothing
+                                        , sendMessageEntities                 = Nothing
+                                        , sendMessageProtectContent           = Nothing
+                                        , sendMessageAllowSendingWithoutReply = Nothing
                                         }
   if not $ responseOk res
     then do
