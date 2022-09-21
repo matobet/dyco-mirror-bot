@@ -49,6 +49,8 @@ dependencies:
 - with-utf8
 - yaml
 
+language: GHC2021
+
 default-extensions:
 - DataKinds
 - DeriveAnyClass
@@ -56,14 +58,9 @@ default-extensions:
 - DerivingStrategies
 - DerivingVia
 - DuplicateRecordFields
-- FlexibleContexts
-- FlexibleInstances
-- GeneralizedNewtypeDeriving
-- MultiParamTypeClasses
-- NamedFieldPuns
 - OverloadedLabels
+- OverloadedRecordDot
 - OverloadedStrings
-- RankNTypes
 - RecordWildCards
 - TemplateHaskell
 - TransformListComp

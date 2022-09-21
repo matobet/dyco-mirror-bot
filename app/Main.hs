@@ -81,10 +81,10 @@ runMirrorMap botName mirrors originalMessages mirroredMessages endpoints = do
         log' Info $ "Listening on " <> showt sourceProvider <> " events..."
         message <- awaitMessageReceived sourceEndpoint
 
-        let senderName = message ^. #user % #name
-        let isAdmin = senderName `elem` sourceConfig ^. #admins
+        let senderName = message.user.name
+        let isAdmin = senderName `elem` sourceConfig.admins
         let isBot = senderName == botName
-        let mCommand = parseCommand =<< message ^. #content
+        let mCommand = parseCommand =<< message.content
 
         case (isAdmin, mCommand) of
           (True, Just Quit) -> do
@@ -104,27 +104,27 @@ runMirrorMap botName mirrors originalMessages mirroredMessages endpoints = do
               )
 
             -- cache original -> [mirrors]
-            modifyMVar_ originalMessages $ pure . Map.insert (message ^. #id) (OriginalMessageInfo mirroredTo)
+            modifyMVar_ originalMessages $ pure . Map.insert message.id (OriginalMessageInfo mirroredTo)
 
             -- cache [mirrors] -> original
-            let sourceChannelRef = ChannelRef sourceProvider $ message ^. #channel % #name
-            let mirroredMessageInfo = MirroredMessageInfo sourceChannelRef $ message ^. #id
+            let sourceChannelRef = ChannelRef sourceProvider $ message.channel.name
+            let mirroredMessageInfo = MirroredMessageInfo sourceChannelRef message.id
             modifyMVar_ mirroredMessages $ pure . Map.union (Map.fromList $ (snd <$> mirroredTo) `zip` repeat mirroredMessageInfo)
 
   where
     handleReplyToOriginal message = do
-      originalMessageId <- MaybeT $ return $ message ^. #replyTo
+      originalMessageId <- MaybeT $ return message.replyTo
       OriginalMessageInfo{mirroredTo} <- MaybeT $ Map.lookup originalMessageId <$> readMVar originalMessages
       forM mirroredTo $ \(target, messageId) -> mirrorToChannel target message { replyTo = Just messageId }
 
     handleReplyToMirror message = do
-      mirroredMessageId <- MaybeT $ return $ message ^. #replyTo
+      mirroredMessageId <- MaybeT $ return message.replyTo
       MirroredMessageInfo{originalChannel, originalMessageId = originalOfOriginalMessageId} <- MaybeT $ Map.lookup mirroredMessageId <$> readMVar mirroredMessages
       pure <$> mirrorToChannel originalChannel message { replyTo = Just originalOfOriginalMessageId }
 
     handlePlainMirror message sourceMirrors =
       sourceMirrors
-      & filter (\MirrorConfig{source = ChannelRef{channelName}} -> channelName == message ^. #channel % #name)
+      & filter (\MirrorConfig{source = ChannelRef{channelName}} -> channelName == message.channel.name)
       & mapM (\MirrorConfig{target} -> mirrorToChannel target message)
 
     mirrorToChannel target@ChannelRef{provider = targetProvider, channelName = targetChannelName} message = do
@@ -134,7 +134,7 @@ runMirrorMap botName mirrors originalMessages mirroredMessages endpoints = do
           mzero
 
         Just (targetEndpoint, targetConfig) ->
-          case channelIdByName targetChannelName (targetConfig ^. #channels) of
+          case channelIdByName targetChannelName targetConfig.channels of
             Nothing -> do
               log' Error $ mconcat ["Channel: ", showt targetChannelName, " not found in provider", showt targetProvider]
               mzero

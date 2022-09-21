@@ -5,22 +5,26 @@
 
 packages:
 - completed:
-    hackage: discord-haskell-1.12.4@sha256:80ca52ccb6ceeb0dee3114037c16065ad2e1bf8223b80869566f60afeac5f6c3,4527
+    commit: 3435866b6cbf676b49c1a5dbb054e6bd4cc9e37e
+    git: https://github.com/matobet/discord-haskell.git
+    name: discord-haskell
     pantry-tree:
-      size: 2681
-      sha256: 6dfdc38afa993ea8d5a0dea563aff28c505f6d927b843ee77b77edb4a4e57c4c
+      sha256: 7a6ec1084fc117fa544015dab130194fd832d5d44410fddc08ec615a268f088d
+      size: 4357
+    version: 1.15.3
   original:
-    hackage: discord-haskell-1.12.4
+    commit: 3435866b6cbf676b49c1a5dbb054e6bd4cc9e37e
+    git: https://github.com/matobet/discord-haskell.git
 - completed:
     hackage: emoji-0.1.0.2@sha256:d995572a5c7dcd28f98eb15c6e387a7b3bda1ac2477ab0d9dba8580d5d7b161f,1273
     pantry-tree:
-      size: 437
       sha256: dd9ea90a631342e5db0fc21331ade4d563a685e9125d5a3989eefa8e1b96c6c6
+      size: 437
   original:
     hackage: emoji-0.1.0.2
 snapshots:
 - completed:
-    size: 616897
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/0.yaml
-    sha256: bbf2be02f17940bac1f87cb462d4fb0c3355de6dcfc53d84f4f9ad3ee2164f65
-  original: lts-19.0
+    sha256: 30e63c84c86f37235eeb0b49307d7953e6390ac7a9f54154e623125c1013654a
+    size: 637177
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/9/21.yaml
+  original: nightly-2022-09-21

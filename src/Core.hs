@@ -42,8 +42,8 @@ data Message = Message
   deriving TextShow via FromGeneric Message
 
 formatMessage :: Message -> Text
-formatMessage Message {..} =
-  mconcat ["[#", channel ^. #name, "]: ", user ^. #name, ": ", fromMaybe "" content]
+formatMessage msg =
+  mconcat ["[#", msg.channel.name, "]: ", msg.user.name, ": ", fromMaybe "" msg.content]
 
 newtype ChannelId = ChannelId { unChannelId :: Text }
   deriving newtype TextShow
